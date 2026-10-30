@@ -282,17 +282,17 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .film__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .film__big {
   position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 22px;
-  background: radial-gradient(60% 60% at 50% 50%, rgba(5,6,10,.25), rgba(5,6,10,.7)); color: var(--porcelain);
+  background: radial-gradient(60% 60% at 50% 50%, rgba(245,244,240,0), rgba(245,244,240,.25)); color: var(--ink, #0B0C10);
   transition: opacity 400ms var(--ease-out);
 }
 .film__big-ic { position: relative; width: 112px; height: 112px; border-radius: 50%; background: rgba(255,255,255,.12); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.3), 0 20px 60px -10px rgba(0,0,0,.6); transition: transform 300ms var(--ease-out), background-color 200ms ease; }
 .film__big-ic::after { content: ''; position: absolute; left: 46px; top: 38px; border-left: 30px solid #fff; border-top: 18px solid transparent; border-bottom: 18px solid transparent; }
 .film__big-txt { display: grid; gap: 4px; text-align: center; }
 .film__big-txt b { font-size: clamp(20px, 2vw, 28px); font-weight: 650; letter-spacing: -0.02em; }
-.film__big-txt small { font-size: 15px; color: rgba(244,242,238,.75); }
+.film__big-txt small { font-size: 15px; color: #4A4F5C; }
 @media (hover: hover) and (pointer: fine) { .film__big:hover .film__big-ic { transform: scale(1.06); background: rgba(255,255,255,.2); } }
 .film.is-playing .film__big, .film.has-played .film__big { opacity: 0; pointer-events: none; }
-.film.has-played:not(.is-playing) .film__big { opacity: 1; pointer-events: auto; background: rgba(5,6,10,.45); }
+.film.has-played:not(.is-playing) .film__big { opacity: 1; pointer-events: auto; background: rgba(245,244,240,.18); }
 .film.has-played .film__big-txt { display: none; }
 
 .film__bar {
@@ -804,3 +804,12 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .film.has-sound .film__snd::after { content: none; }
 .film__snd[aria-pressed="false"] { background: var(--signal); }
 .film.has-sound .film__snd { background: rgba(255,255,255,.12); }
+
+/* Light film: dark glass play button that reads on a light frame */
+.film__big-ic { background: rgba(11,12,16,.72) !important; box-shadow: 0 0 0 8px rgba(11,12,16,.08), 0 24px 60px -16px rgba(11,12,16,.55) !important; }
+.film__big-txt b { color: #0B0C10; }
+
+/* The loop headline sits in a narrow column: size it to keep a clean three-line rag */
+.loop .display { font-size: clamp(36px, 4.2vw, 60px); }
+
+@media (max-width: 760px) { .film__big-txt { display: none; } }

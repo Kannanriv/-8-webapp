@@ -21,7 +21,8 @@
     var(--m-bg);
   color: var(--m-ink);
 }
-.mkt__title em, .mkt__head h3 em, .duo h3 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; }
+/* Accent words use the site type with the brand gradient, same as every other section */
+.mkt__title em, .mkt__head h3 em, .duo h3 em { font-family: inherit; font-style: normal; font-weight: inherit; letter-spacing: inherit; background: linear-gradient(100deg, #4F6BFF, #13A88B 55%, #EE7433); -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: .06em; }
 
 /* Intro */
 .mkt__kick { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: var(--m-mu); margin-bottom: 28px; }
