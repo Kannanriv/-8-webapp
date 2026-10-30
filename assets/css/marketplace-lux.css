@@ -232,3 +232,46 @@
   .aisles .aisle--2 .aisle__obj--0, .aisles .aisle--3 .aisle__obj--0, .aisles .aisle--4 .aisle__obj--0 { left: 12%; top: 14%; }
   .aisles .aisle--2 .aisle__obj--1, .aisles .aisle--3 .aisle__obj--1, .aisles .aisle--4 .aisle__obj--1 { left: 50%; top: 32%; }
 }
+
+/* =========================================================
+   Consistency pass: the Marketplace section follows the homepage system —
+   same section padding, porcelain canvas, display heading, single-panel
+   frames (no double bezel), stage radius and block rhythm.
+   ========================================================= */
+.mkt { padding: var(--section-y) 0; background: var(--porcelain); }
+.mkt::before { content: ''; position: absolute; top: 0; left: max(var(--gutter), calc((100% - var(--wrap)) / 2 + var(--gutter))); right: max(var(--gutter), calc((100% - var(--wrap)) / 2 + var(--gutter))); height: 1px; background: var(--line-light); }
+.mkt .section-head { margin-bottom: clamp(40px, 5vw, 64px); }
+.mkt__film { margin: 0; }
+.mkt__shell { padding: 0; background: none; box-shadow: none; border-radius: var(--r-stage); }
+.mkt__screen { border-radius: 30px; box-shadow: 0 0 0 1px rgba(11,12,16,.07), 0 60px 120px -60px rgba(11,12,16,.35); }
+.mkt__chapters { gap: 8px; margin-top: 14px; padding: 0; }
+.mkt__chapters button { padding: 16px 14px 14px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px var(--line-light); overflow: hidden; }
+.mkt__chapters button::before, .mkt__chapters button::after { height: 3px; border-radius: 0; }
+.mkt__chapters button::after { background: linear-gradient(100deg, #4F6BFF, #13A88B 55%, #EE7433); }
+.mkt__chapters button[aria-current="true"] { box-shadow: inset 0 0 0 1px rgba(79,107,255,.35); background: rgba(79,107,255,.06); }
+.mkt .aep__cta { margin-top: 40px; }
+.btn--ghost-dark { color: var(--ink); box-shadow: inset 0 0 0 1px rgba(11,12,16,.2); }
+@media (hover: hover) and (pointer: fine) { .btn--ghost-dark:hover { box-shadow: inset 0 0 0 1px rgba(11,12,16,.5); background: rgba(11,12,16,.03); } }
+
+.mkt__block { margin-top: clamp(80px, 9vw, 128px); }
+.mkt__head h3 { font-size: clamp(30px, 3.6vw, 48px); line-height: 1.04; letter-spacing: -0.04em; }
+.mkt__head p { font-size: clamp(16px, 1.3vw, 18px); line-height: 1.55; }
+
+/* Cards: one panel, stage radius, same soft shadow as the rest of the site */
+.aisle { padding: 0; border-radius: var(--r-stage); background: #fff; box-shadow: 0 1px 0 var(--line-light), 0 40px 80px -48px rgba(11,12,16,.3); }
+.aisle::before { display: none; }
+.aisle__art { border-radius: var(--r-stage) var(--r-stage) 0 0; }
+.aisle:focus-visible { border-radius: var(--r-stage); }
+.duo > article { border-radius: var(--r-stage); }
+.duo__buy { box-shadow: 0 1px 0 var(--line-light), 0 40px 80px -48px rgba(11,12,16,.3); }
+.mkt .show { border-radius: var(--r-stage); }
+
+@media (max-width: 760px) {
+  .mkt__chapters { display: flex; overflow-x: auto; scrollbar-width: none; }
+  .mkt__chapters::-webkit-scrollbar { display: none; }
+  .mkt__chapters li { flex: 0 0 140px; }
+}
+.mkt .show { padding: 0; background: #fff; border-radius: var(--r-stage); overflow: hidden; box-shadow: 0 1px 0 var(--line-light), 0 40px 80px -48px rgba(11,12,16,.3); }
+.mkt .show__tabs { border-radius: 0; }
+.mkt .show__stage { border-radius: 0; box-shadow: none; }
+.duo__sell { box-shadow: 0 40px 80px -48px rgba(11,12,16,.5) !important; }

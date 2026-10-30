@@ -826,3 +826,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .film__hint:hover { background: rgba(11,12,16,.92); }
 .film__hint-ic { width: 26px; height: 26px; border-radius: 50%; background: var(--signal); position: relative; flex: none; }
 .film__hint-ic::after { content: ''; position: absolute; left: 10px; top: 8px; border-left: 9px solid #fff; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+
+/* Film chapter rails: equal-height cells, one line each at the standard content width */
+.film__chapters li, .mkt__chapters li { display: flex; }
+.film__chapters button, .mkt__chapters button { height: 100%; }
+.film__chapters b { font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.film__chapters button { padding: 14px 12px 12px; }
