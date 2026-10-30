@@ -9,8 +9,9 @@
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/marketplace-lux.css">
 </head>
 <body>
   <!-- #8 logo, defined once and reused -->
@@ -41,14 +42,18 @@
           <button class="nav__menu-btn" aria-expanded="false" aria-controls="mega">Ecosystem</button>
           <div class="mega" id="mega" hidden>
             <div class="mega__grid" id="megaGrid"></div>
-            <a class="mega__aep" href="app.html?app=aep">
+            <a class="mega__aep" href="#aep">
               <strong>AEP</strong>
               <span>Choose an outcome and get a complete application, no code</span>
             </a>
+            <a class="mega__aep mega__aep--mk" href="marketplace.html">
+              <strong>Marketplace</strong>
+              <span>Buy and sell certified devices, apps and services</span>
+            </a>
           </div>
         </div>
-        <a href="#loop">How it works</a>
         <a href="#industries">Industries</a>
+        <a href="marketplace.html">Marketplace</a>
       </nav>
       <div class="nav__actions">
         <a class="link-quiet" href="app.html?app=aep">Sign in</a>
@@ -62,6 +67,7 @@
       <a href="#products">Ecosystem</a>
       <a href="#loop">How it works</a>
       <a href="#industries">Industries</a>
+      <a href="marketplace.html">Marketplace</a>
       <a href="#contact" class="btn btn--light">Talk to us</a>
     </div>
   </header>
@@ -143,69 +149,31 @@
     <section class="aep" id="aep">
       <div class="wrap">
         <div class="section-head section-head--dark">
-          <h2 class="display">Tell us the outcome.<br><span class="grad-text">#8 builds the application.</span></h2>
-          <p class="section-lede">Other platforms hand you tools and wish you luck. The #8 AEP starts from what you want to achieve. Pick an outcome, or write your own, and the AEP puts together a complete, working IoT application from the whole ecosystem. You customise it, launch it and go live. No code at any step.</p>
+          <h2 class="display">Start with an outcome.<br><span class="grad-text">Go live with an application.</span></h2>
+          <p class="section-lede">See how teams build their own IoT application in minutes, launch it on their own domain, and power it with devices and apps from the #8 Marketplace. Fleet tracking, cold chain, energy, buildings and factories, all without code.</p>
         </div>
-
-        <ol class="aep__track" id="aepTrack" aria-label="How the AEP works">
-          <li data-stage="0"><span>1</span>Choose an outcome</li>
-          <li data-stage="1"><span>2</span>#8 builds the app</li>
-          <li data-stage="2"><span>3</span>Customise</li>
-          <li data-stage="3"><span>4</span>Launch &amp; go live</li>
-        </ol>
-
-        <div class="aep__body">
-          <div class="outcomes">
-            <p class="outcomes__q">What should your things achieve?</p>
-            <div class="outcomes__list" id="outcomeList" role="radiogroup" aria-label="Choose an outcome"></div>
-            <form class="outcomes__own" id="outcomeForm" autocomplete="off">
-              <label for="outcomeInput" class="sr-only">Describe your own outcome</label>
-              <input id="outcomeInput" type="text" maxlength="90" placeholder="Or describe your own outcome…">
-              <button class="btn btn--signal btn--sm" type="submit">Build it</button>
-            </form>
-          </div>
-
-          <div class="studio" id="studio" data-stage="0">
-            <div class="studio__bar">
-              <span></span><span></span><span></span>
-              <em>#8 AEP · Outcome Studio</em>
-              <b class="studio__status" id="studioStatus" role="status">Waiting for an outcome</b>
-            </div>
-            <div class="studio__body">
-              <div class="studio__left">
-                <div class="studio__outcome">
-                  <small>Outcome</small>
-                  <p id="studioOutcome">Choose an outcome to begin</p>
-                  <span class="studio__kpi" id="studioKpi"></span>
-                </div>
-                <div class="studio__progress" aria-hidden="true"><i id="studioBar"></i></div>
-                <ul class="studio__modules" id="studioModules"></ul>
-              </div>
-              <div class="studio__right">
-                <div class="studio__custom">
-                  <small>Your brand</small>
-                  <div class="swatches" id="swatches" role="radiogroup" aria-label="Brand colour">
-                    <button type="button" role="radio" aria-checked="true" aria-label="Signal blue" style="--s:#5B7CFF"></button>
-                    <button type="button" role="radio" aria-checked="false" aria-label="Ion teal" style="--s:#5EE6C8"></button>
-                    <button type="button" role="radio" aria-checked="false" aria-label="Ember orange" style="--s:#FF8A4C"></button>
-                    <button type="button" role="radio" aria-checked="false" aria-label="Orchid" style="--s:#C77DFF"></button>
-                    <button type="button" role="radio" aria-checked="false" aria-label="Lime" style="--s:#B8E35A"></button>
-                  </div>
-                </div>
-                <div class="sphone" id="sphone">
-                  <div class="sphone__notch"></div>
-                  <div class="sphone__h"><i></i><span id="sphoneName">Your app</span></div>
-                  <div class="sphone__body" id="sphoneBody"></div>
-                  <div class="launch-ring"></div>
-                </div>
-                <p class="studio__live"><span class="dot dot--ion"></span><span id="studioUrl">Live</span></p>
-              </div>
+      </div>
+      <div class="wrap wrap--wide">
+        <div class="film" id="film">
+          <div class="film__frame">
+            <video class="film__video" id="filmVideo" src="assets/video/aep-how-it-works.mp4" poster="assets/video/aep-poster.jpg" muted playsinline preload="metadata" aria-label="How the #8 AEP works, an 85-second film with music"></video>
+            <button type="button" class="film__big" id="filmBig" aria-label="Play the film">
+              <span class="film__big-ic" aria-hidden="true"></span>
+              <span class="film__big-txt"><b>Build any IoT application. Launch it this week.</b><small>Watch the film · 1:25 · sound on</small></span>
+            </button>
+            <div class="film__bar">
+              <button type="button" class="film__btn" id="filmToggle" aria-label="Play"><span class="film__ic film__ic--play" aria-hidden="true"></span></button>
+              <span class="film__time" id="filmTime">0:00 / 1:25</span>
+              <div class="film__track" id="filmTrack" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="85" aria-valuenow="0"><i id="filmFill"></i></div>
+              <button type="button" class="film__btn film__snd" id="filmSound" aria-label="Turn sound on" aria-pressed="false"><span class="film__ic film__ic--muted" aria-hidden="true"></span></button>
+              <button type="button" class="film__btn" id="filmFull" aria-label="Full screen"><span class="film__ic film__ic--full" aria-hidden="true"></span></button>
             </div>
           </div>
+          <ol class="film__chapters" id="filmChapters" aria-label="Chapters"></ol>
         </div>
         <div class="aep__cta">
-          <a class="btn btn--signal" href="app.html?app=aep">Start with your outcome</a>
-          <span class="muted">Free sandbox. Your first app live in an afternoon.</span>
+          <a class="btn btn--signal" href="app.html?app=aep">Start free in the AEP</a>
+          <a class="btn btn--ghost" href="#contact">Book a live demo</a>
         </div>
       </div>
     </section>
@@ -418,6 +386,74 @@
       <div class="wrap rail__hint muted">Drag or scroll to see more industries</div>
     </section>
 
+    <!-- ============ MARKETPLACE (light) ============ -->
+    <section class="mkt" id="marketplace" aria-labelledby="mktTitle">
+      <div class="wrap mkt__intro">
+        <p class="mkt__kick"><span class="mkt__seal" aria-hidden="true"></span>The #8 Marketplace</p>
+        <h2 class="mkt__title" id="mktTitle">Everything IoT.<br><em>One marketplace.</em></h2>
+        <div class="mkt__row">
+          <p class="mkt__lede">Sensors and gateways, apps and integrations, data plans, and the people who install and run it all. Certified to work together, bought in one cart, live in your AEP the same week.</p>
+          <div class="mkt__cta">
+            <a class="btn btn--dark" href="marketplace.html">Explore the Marketplace</a>
+            <a class="mkt__link" href="marketplace.html#sell">Sell on #8 <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap wrap--wide">
+        <figure class="mkt__film" id="mktFilm">
+          <div class="mkt__shell">
+            <div class="mkt__screen">
+              <video class="mkt__video" id="mktVideo" src="assets/video/marketplace.mp4" poster="assets/video/marketplace-poster.jpg" muted loop playsinline preload="metadata" aria-label="The #8 Marketplace: devices, apps, connectivity and services from every seller, bought in one cart. 30-second silent film."></video>
+              <button type="button" class="mkt__play" id="mktPlay" aria-label="Pause the film"><span class="mkt__ic" aria-hidden="true"></span></button>
+            </div>
+          </div>
+          <figcaption><ol class="mkt__chapters" id="mktChapters" aria-label="Film chapters"></ol></figcaption>
+        </figure>
+      </div>
+
+      <div class="wrap mkt__block">
+        <div class="mkt__head">
+          <h3>Five aisles.<br><em>Every part of an IoT business.</em></h3>
+          <p>Whatever your outcome needs, it is on a shelf here, from the probe in the cold room to the engineer who fits it.</p>
+        </div>
+        <div class="aisles" id="aisles"></div>
+      </div>
+
+      <div class="wrap mkt__block">
+        <div class="mkt__head mkt__head--row">
+          <h3>In the spotlight.</h3>
+          <a class="mkt__link" href="marketplace.html#browse">See every listing <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="show" id="show"></div>
+      </div>
+
+      <div class="wrap mkt__block duo">
+        <article class="duo__buy">
+          <p class="duo__k">For buyers</p>
+          <h3>The whole stack.<br><em>One supplier.</em></h3>
+          <ul class="duo__pts">
+            <li><b>#8 Certified</b><span>Tested by #8 for protocol, security and zero-touch onboarding.</span></li>
+            <li><b>One cart, one invoice</b><span>Order from ten sellers and pay once.</span></li>
+            <li><b>Arrives ready</b><span>Hardware ships pre-provisioned for your tenant. Plug it in and it reports.</span></li>
+            <li><b>Runs in your AEP</b><span>Everything you buy drops straight into your outcome blueprint.</span></li>
+          </ul>
+          <a class="btn btn--dark" href="marketplace.html">Start shopping</a>
+        </article>
+        <article class="duo__sell">
+          <p class="duo__k">For sellers</p>
+          <h3>Your product,<br><em>inside every blueprint.</em></h3>
+          <ul class="duo__who">
+            <li><a href="marketplace.html#sell"><b>Device OEMs</b><span>Certified hardware, recommended wherever it fits.</span><i aria-hidden="true">→</i></a></li>
+            <li><a href="marketplace.html#sell"><b>Developers</b><span>Apps, templates and integrations, paid monthly.</span><i aria-hidden="true">→</i></a></li>
+            <li><a href="marketplace.html#sell"><b>Service partners</b><span>Installation, design and 24×7 operations.</span><i aria-hidden="true">→</i></a></li>
+            <li><a href="marketplace.html#sell"><b>Carriers</b><span>IoT data plans, managed in SIM Management.</span><i aria-hidden="true">→</i></a></li>
+          </ul>
+          <a class="btn btn--light" href="marketplace.html#sell">Apply to sell</a>
+        </article>
+      </div>
+    </section>
+
     <!-- ============ 08 EVERYTHING IoT ============ -->
     <section class="matrix" id="matrix">
       <div class="wrap">
@@ -439,6 +475,7 @@
           <div class="matrix__row" role="row"><span role="cell">Event → ticket → dispatch</span><span role="cell">Helpdesk + glue scripts</span><span role="cell" class="yes">Built in</span></div>
           <div class="matrix__row" role="row"><span role="cell">Field installation app</span><span role="cell">Spreadsheets & photos</span><span role="cell" class="yes">Built in</span></div>
           <div class="matrix__row" role="row"><span role="cell">White-label customer apps</span><span role="cell">Agency project, 6 months</span><span role="cell" class="yes">Built in</span></div>
+          <div class="matrix__row" role="row"><span role="cell">Certified devices, apps & services</span><span role="cell">Separate sourcing for each</span><span role="cell" class="yes">The Marketplace</span></div>
           <div class="matrix__row" role="row"><span role="cell">Outcome-driven, no-code app builder</span><span role="cell">Months of custom development</span><span role="cell" class="yes">The AEP</span></div>
         </div>
       </div>
@@ -469,6 +506,8 @@
       <div><h4>Ecosystem</h4><ul id="footProducts"></ul></div>
       <div><h4>Platform</h4><ul>
         <li><a href="app.html?app=aep">AEP</a></li>
+        <li><a href="marketplace.html">Marketplace</a></li>
+        <li><a href="marketplace.html#sell">Sell on #8</a></li>
         <li><a href="#shift">Operations-driven IoT</a></li>
         <li><a href="#loop">How it works</a></li>
         <li><a href="#matrix">Everything IoT</a></li>
@@ -487,7 +526,9 @@
   </footer>
 
   <script src="assets/js/products.js"></script>
+  <script src="assets/js/market-data.js"></script>
   <script src="assets/js/hero.js"></script>
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/marketplace-lux.js"></script>
 </body>
 </html>

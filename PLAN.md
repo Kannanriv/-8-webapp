@@ -69,6 +69,37 @@
 - **Industries** each have a line illustration with live IoT signals, plus a ninth "Your industry" card linking to the Outcome Studio.
 - Blueprint data lives in `OUTCOMES` in `assets/js/main.js`.
 
+## 4c. Revision 3: Outcome Studio and Marketplace
+- **Outcome Studio** (`assets/js/studio.js`, `assets/css/studio.css`) walks one outcome from device onboarding to a live app in six steps: Outcome → Blueprint → Devices → Automate → Brand → Go live.
+  - Only the applications an outcome needs are switched on (e.g. cold chain: 6 of 8). Each has a reason, and every one can be toggled.
+  - Devices come from Marketplace listings, with quantities, connectivity (cellular switches SIM Management on) and a five-stage onboarding: Register → Secure → Connect → Install → First data.
+  - Rule builder: threshold slider, duration, ticket priority, channels, automatic device command, escalation. The live reading on the phone turns into an alert when it crosses your limit.
+  - Brand: name, any colour, dark/light theme, home-screen widgets, web address, platforms. "Watch the whole flow" plays all six steps.
+  - Blueprints are in `BLUEPRINTS` in `studio.js`.
+- **Marketplace** (`marketplace.html`, `assets/js/market.js`, `assets/css/market.css`): search, filters (category, industry, seller, #8 Certified), sorting, product detail dialog, cart with one-time/monthly totals and a quote request, seller section (OEMs, developers, service partners, carriers) with a 4-step selling flow and an application form. Deep links: `marketplace.html#item-<id>`.
+- Listings live in `assets/js/market-data.js` (sample data with placeholder vendors), shared by the homepage teaser, the Studio and the Marketplace.
+
+## 4d. Revision 4: richer Studio, calmer Marketplace
+- Studio: multiple outcomes at once (apps, devices and workflows are combined); devices via "Buy recommended" (ranked Marketplace devices with a hardware estimate) or "I already have devices" (type, quantity, protocol, compatibility check); a ready-made workflow library per outcome plus "Build your own"; launch on a free #8 address or your own domain (CNAME record and verification). AEP calls to action in the rail and after launch.
+- Homepage Marketplace: the scrolling card rows are replaced by a still, interactive spotlight (category tabs, one featured product, list to switch).
+- Marketplace page: calmer card design and four curated Outcome kits that add every item to the cart in one click. Kits live in `HASH8_KITS` in `market-data.js`.
+
+## 4e. Revision 5: the AEP film replaces the hands-on Studio
+- Visitors watch how the AEP works; they interact in the real AEP. The interactive Outcome Studio was removed from the homepage.
+- `film/aep-film.html` is the film's source: 1920×1080, 81 s, 7 chapters (Your business: industry, sites, assets, team, customers → Outcomes → Blueprint → Devices & onboarding → Workflows → Brand → Own domain & live) plus intro and AEP call to action. Every frame is a pure function of time (`seek(t)`), so it renders identically every time.
+- `assets/video/aep-how-it-works.mp4` + `aep-poster.jpg` are rendered from it (headless Edge frame capture → ffmpeg H.264, 30 fps). To re-render after editing the film: `pip install imageio-ffmpeg`, then `node film/render.js "<path to its ffmpeg exe>"` (needs Microsoft Edge; takes a few minutes).
+- Homepage player: poster with play button, silent autoplay the first time it scrolls into view, pause when it leaves, controls (play/pause, seek, time, full screen) and a 7-chapter rail with per-chapter progress.
+
+## 4f. Revision 6: marketing film with music
+- The film is now pure marketing (70 s): hook → how it works in 3 steps → six live use-case dashboards (fleet tracking map, cold chain, smart energy, smart buildings, agriculture, manufacturing) → 12 more use cases → end-to-end pipeline → AEP call to action.
+- Original soundtrack synthesised in code (`film/music.js`), muxed into the MP4 as AAC. Autoplay is muted (browser rule); the big play button and the speaker button turn sound on.
+- Previous film kept for later: `assets/video/archive/aep-how-it-works-v1.mp4`, `aep-poster-v1.jpg`, source in `film/archive/aep-film-v1.html`.
+- Rebuild: `node film/render.js <ffmpeg>` then `node film/music.js <ffmpeg>`.
+
+## 4g. Revision 7: light-mode film
+- Light, 85 s: hook → Build it yourself (App Builder: outcomes, apps, Marketplace devices, workflow canvas, brand, own domain + launch, with a live phone preview) → example apps (fleet tracking, cold chain, smart energy, buildings, manufacturing) → #8 Marketplace (search, add to app, cart) → hundreds more → end to end → CTA. Music retimed to the new scenes.
+- Saved for later: `assets/video/archive/aep-how-it-works-v2-dark-music.mp4` (+ `film/archive/aep-film-v2-dark.html`) and v1.
+
 ## 5. Products & app routes (CTA targets, apps built later)
 | # | Product | Route |
 |---|---|---|

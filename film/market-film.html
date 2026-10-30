@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>#8 Marketplace film</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* Source for the #8 Marketplace loop (light edition). Every frame is a pure function of time:
+   seek(t) renders the frame at t seconds, so film/render-market.js can export it frame by frame. */
+:root {
+  --bg: #F6F4EF; --ink: #0B0C10; --mu: #6B7080; --line: rgba(11,12,16,.08);
+  --sig: #4F6BFF; --ion: #13A88B; --emb: #EE7433;
+  --font: 'Inter Tight', system-ui, sans-serif; --serif: 'Instrument Serif', Georgia, serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #E9E7E1; overflow: hidden; }
+body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: antialiased; display: grid; place-items: center; }
+#stage { position: relative; width: 1920px; height: 1080px; flex: none; overflow: hidden;
+  background: radial-gradient(1200px 760px at 88% -10%, rgba(79,107,255,.10), transparent 60%), radial-gradient(1000px 700px at -5% 110%, rgba(19,168,139,.09), transparent 60%), radial-gradient(800px 500px at 60% 120%, rgba(238,116,51,.06), transparent 60%), var(--bg); }
+.abs { position: absolute; will-change: transform, opacity; }
+.serif { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+.grad { background: linear-gradient(100deg, #4F6BFF, #13A88B 55%, #EE7433); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* Line art from the Marketplace data, inked for a light stage */
+.art { display: block; overflow: visible; }
+.art .l { fill: none; stroke: #1C1F2B; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.art .a, .art .w { fill: none; stroke: hsl(var(--hue, 228) 72% 46%); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.art .f { fill: hsl(var(--hue, 228) 72% 46%); }
+.art .g { fill: none; stroke: rgba(11,12,16,.16); stroke-width: 1; }
+.art .t { fill: #1C1F2B; font-family: var(--font); font-weight: 700; font-size: 15px; text-anchor: middle; }
+.art .dashed { stroke-dasharray: 4 6; }
+
+/* Orbit tiles */
+.tile { left: 0; top: 0; width: 150px; height: 118px; padding: 6px; border-radius: 30px; background: rgba(11,12,16,.035); }
+.tile i { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 24px; padding: 16px 20px;
+  background: radial-gradient(90% 90% at 50% 0%, hsl(var(--hue) 70% 60% / .16), transparent 70%), #fff;
+  box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 30px 50px -30px rgba(11,12,16,.35); }
+.tile .art { width: 100%; height: 100%; }
+
+.hero { left: 0; right: 0; top: 330px; text-align: center; }
+.hero h1 { font-size: 200px; line-height: .9; letter-spacing: -0.06em; font-weight: 700; }
+.hero h1 .serif { font-size: 210px; letter-spacing: -0.03em; }
+.kick { font-size: 26px; font-weight: 600; color: var(--mu); letter-spacing: -0.01em; }
+
+/* Aisle beats */
+.word { left: 150px; top: 330px; width: 820px; }
+.word .k { display: block; font-size: 26px; font-weight: 600; color: var(--mu); margin-bottom: 18px; }
+.word h2 { font-size: 150px; line-height: .92; letter-spacing: -0.055em; font-weight: 700; }
+.word h2 .serif { font-size: 160px; }
+.word p { margin-top: 34px; font-size: 28px; line-height: 1.4; color: var(--mu); max-width: 640px; }
+
+.card { left: 0; top: 0; width: 400px; padding: 8px; border-radius: 40px; background: rgba(11,12,16,.04); }
+.card > div { border-radius: 33px; overflow: hidden; background: #fff; box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 60px 90px -50px rgba(11,12,16,.45); }
+.card .ph { height: 280px; display: grid; place-items: center; padding: 44px 60px; background: radial-gradient(80% 90% at 50% 0%, hsl(var(--hue) 70% 60% / .2), transparent 72%), #FBFAF7; border-bottom: 1px solid var(--line); }
+.card .ph .art { width: 100%; height: 100%; }
+.card .bd { padding: 24px 28px 28px; display: grid; gap: 6px; }
+.card small { font-size: 16px; color: var(--mu); display: flex; justify-content: space-between; }
+.card small em { font-style: normal; color: var(--ion); font-weight: 600; }
+.card b { font-size: 27px; line-height: 1.15; letter-spacing: -0.03em; font-weight: 650; min-height: 62px; }
+.card .pr { display: flex; justify-content: space-between; align-items: baseline; margin-top: 14px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 24px; font-weight: 650; letter-spacing: -0.02em; }
+.card .pr span { font-size: 15px; font-weight: 500; color: var(--mu); letter-spacing: 0; }
+
+/* Cart */
+.cartw { left: 1030px; top: 150px; width: 740px; padding: 10px; border-radius: 44px; background: rgba(11,12,16,.04); }
+.cartw > div { border-radius: 36px; background: #fff; box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 70px 110px -60px rgba(11,12,16,.5); padding: 34px 38px 34px; }
+.cart-h { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.cart-h b { font-size: 30px; letter-spacing: -0.03em; }
+.cart-h span { font-size: 17px; font-weight: 600; color: var(--mu); padding: 8px 16px; border-radius: 999px; background: rgba(11,12,16,.05); }
+.row { display: grid; grid-template-columns: 76px 1fr auto; gap: 18px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.row i { display: grid; place-items: center; height: 60px; border-radius: 16px; padding: 8px 12px; background: radial-gradient(90% 90% at 50% 0%, hsl(var(--hue) 70% 60% / .2), transparent 75%), #FBFAF7; }
+.row i .art { width: 100%; height: 100%; }
+.row b { display: block; font-size: 20px; letter-spacing: -0.02em; font-weight: 600; }
+.row small { font-size: 15px; color: var(--mu); }
+.row em { font-style: normal; font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tot { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 22px 0 22px; }
+.tot div { padding: 16px 20px; border-radius: 20px; background: #FBFAF7; box-shadow: inset 0 0 0 1px var(--line); }
+.tot span { font-size: 15px; color: var(--mu); }
+.tot b { display: block; font-size: 34px; letter-spacing: -0.035em; font-variant-numeric: tabular-nums; }
+.go { position: relative; height: 74px; border-radius: 999px; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 22px; font-weight: 600; overflow: hidden; }
+.go s { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: var(--ion); transform-origin: left; text-decoration: none; }
+.go span { position: relative; }
+
+/* Sell */
+.sellh { left: 0; right: 0; top: 120px; text-align: center; }
+.sellh span { display: block; font-size: 26px; font-weight: 600; color: var(--mu); margin-bottom: 14px; }
+.sellh h2 { font-size: 112px; line-height: .95; letter-spacing: -0.055em; font-weight: 700; }
+.sellh h2 .serif { font-size: 120px; }
+.who { top: 470px; width: 370px; height: 450px; padding: 8px; border-radius: 40px; background: rgba(11,12,16,.04); }
+.who > div { position: relative; height: 100%; border-radius: 33px; background: #fff; box-shadow: 0 60px 90px -55px rgba(11,12,16,.45); padding: 30px; display: flex; flex-direction: column; }
+.who .ph { height: 150px; border-radius: 24px; display: grid; place-items: center; padding: 20px 60px; background: radial-gradient(80% 90% at 50% 0%, hsl(var(--hue) 70% 60% / .2), transparent 72%), #FBFAF7; }
+.who .ph .art { width: 100%; height: 100%; }
+.who b { font-size: 32px; letter-spacing: -0.035em; margin-top: 26px; }
+.who p { font-size: 19px; color: var(--mu); line-height: 1.4; margin-top: 8px; }
+.ping { position: absolute; left: 22px; right: 22px; bottom: 22px; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 18px; background: var(--ink); color: #fff; font-size: 16px; font-weight: 600; }
+.ping i { width: 10px; height: 10px; border-radius: 50%; background: #5EE6C8; box-shadow: 0 0 12px #5EE6C8; flex: none; }
+
+.outro { left: 0; right: 0; top: 300px; display: grid; justify-items: center; gap: 30px; text-align: center; }
+.outro svg { width: 120px; height: 103px; fill: var(--ink); color: var(--ink); }
+.outro h2 { font-size: 132px; line-height: .95; letter-spacing: -0.055em; font-weight: 700; }
+.outro p { font-size: 74px; line-height: 1; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 96 82">
+    <polygon points="31,18 41,18 25,80 15,80"/><polygon points="53,18 63,18 47,80 37,80"/>
+    <polygon points="10,32 72,32 69.5,42 7.5,42"/><polygon points="4,56 66,56 63.5,66 1.5,66"/>
+    <g fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="84" cy="7.6" rx="5.6" ry="5.2"/><ellipse cx="84" cy="19.6" rx="6.8" ry="6.6"/></g>
+  </symbol>
+</svg>
+<div id="stage"></div>
+<script src="../assets/js/market-data.js"></script>
+<script>
+(function () {
+  var DURATION = 30;
+  var stage = document.getElementById('stage');
+  var M = {}; (window.HASH8_MARKET || []).forEach(function (m) { M[m.id] = m; });
+  var ART = window.HASH8_ART;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function clamp(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+  function seg(t, a, b) { return clamp((t - a) / (b - a)); }
+  function eo(x) { return 1 - Math.pow(1 - x, 4); }                  // strong ease-out
+  function eio(x) { return x < .5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2; }
+  function inout(t, a, b, d) { return Math.min(eo(seg(t, a, a + d)), 1 - eio(seg(t, b - d * .7, b))); }
+  function put(el, o, x, y, s, r) {
+    el.style.opacity = o; el.style.visibility = o > 0.002 ? 'visible' : 'hidden';
+    el.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + (s == null ? 1 : s) + ') rotate(' + (r || 0) + 'deg)';
+  }
+  function fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
+
+  /* ---------------- Build ---------------- */
+  var ORBIT = ['coldsense', 'coldpack', 'orbit', 'plan100', 'eg200', 'erp', 'meterix', 'install', 'airiq', 'pdm', 'loragw', 'esim', 'caretag', 'msg', 'terraprobe', 'noc'];
+  var html = ORBIT.map(function (id, i) { return '<div class="abs tile" id="o' + i + '" style="--hue:' + M[id].hue + '"><i>' + ART(M[id].kind) + '</i></div>'; }).join('');
+  html += '<div class="abs hero" id="hero"><p class="kick" id="heroK">The #8 Marketplace</p><h1><span id="h1a">Everything IoT.</span><br><span class="serif" id="h1b">One marketplace.</span></h1></div>';
+
+  var BEATS = [
+    ['Devices', 'Every sensor.', 'Certified hardware from device makers, pre-provisioned for your tenant.', ['coldsense', 'eg200', 'orbit']],
+    ['Apps & templates', 'Every app.', 'Ready-made applications and templates, built on the #8 AEP.', ['coldpack', 'pdm', 'driverscore']],
+    ['Connectivity', 'Every network.', 'Data plans from carriers, managed in SIM Management.', ['plan100', 'esim', 'nbiot']],
+    ['Services', 'Every expert.', 'Installers, architects and 24×7 operations teams on demand.', ['install', 'noc', 'workshop']]
+  ];
+  var B0 = 4.4, BL = 2.6;
+  BEATS.forEach(function (b, j) {
+    var w = b[1].split(' ');
+    html += '<div class="abs word" id="w' + j + '"><span class="k">' + b[0] + '</span><h2>' + w[0] + '<br><span class="serif">' + w[1] + '</span></h2><p>' + b[2] + '</p></div>';
+    b[3].forEach(function (id, k) {
+      var m = M[id];
+      html += '<div class="abs card" id="c' + j + '_' + k + '" style="--hue:' + m.hue + '"><div><div class="ph">' + ART(m.kind) + '</div><div class="bd">' +
+        '<small>' + m.vendor + (m.certified ? '<em>✓ #8 Certified</em>' : '') + '</small><b>' + m.name + '</b>' +
+        '<div class="pr">' + m.priceLabel + '<span>' + m.unit + '</span></div></div></div></div>';
+    });
+  });
+
+  var CART = [['coldsense', 20], ['plan100', 20], ['coldpack', 1], ['install', 20], ['eg200', 1], ['msg', 2000]];
+  html += '<div class="abs word" id="cw"><span class="k">One cart</span><h2>Every seller.<br><span class="serif">One order.</span></h2><p>Devices, plans, apps and installers from six sellers. One invoice, one delivery date, live in your app.</p></div>';
+  html += '<div class="abs cartw" id="cart"><div><div class="cart-h"><b>Your cart</b><span id="cartN">0 items · 0 sellers</span></div>' +
+    CART.map(function (c, i) {
+      var m = M[c[0]];
+      return '<div class="row" id="r' + i + '" style="--hue:' + m.hue + '"><i>' + ART(m.kind) + '</i><div><b>' + m.name + '</b><small>' + m.vendor + ' · ×' + c[1].toLocaleString('en-IN') + '</small></div><em>' + m.priceLabel + '</em></div>';
+    }).join('') +
+    '<div class="tot"><div><span>Due today</span><b id="tOne">₹0</b></div><div><span>Every month</span><b id="tMon">₹0</b></div></div>' +
+    '<div class="go" id="go"><s id="goBar"></s><span id="goTxt">Place order</span></div></div></div>';
+
+  var WHO = [['probe', 168, 'Device OEMs', 'Sell certified hardware into every matching blueprint.', 'New order · 120 probes'],
+             ['app', 228, 'Developers', 'Publish apps and templates. Get paid every month.', '18 new subscriptions'],
+             ['service', 45, 'Service partners', 'Install, design and operate for customers nearby.', 'Install job · Pune · 40 sites'],
+             ['sim', 22, 'Carriers', 'Sell IoT data plans managed in SIM Management.', '2,400 SIMs activated']];
+  html += '<div class="abs sellh" id="sh"><span>Sell on #8</span><h2>Reach every team<br><span class="serif">building IoT.</span></h2></div>';
+  WHO.forEach(function (w, i) {
+    html += '<div class="abs who" id="v' + i + '" style="--hue:' + w[1] + ';left:' + (150 + i * 410) + 'px"><div><div class="ph">' + ART(w[0]) + '</div><b>' + w[2] + '</b><p>' + w[3] + '</p>' +
+      '<div class="ping" id="vp' + i + '"><i></i>' + w[4] + '</div></div></div>';
+  });
+
+  html += '<div class="abs outro" id="out"><svg aria-hidden="true"><use href="#logo"/></svg><h2>The #8 Marketplace.</h2><p class="serif"><span class="grad">Everything IoT, in one place.</span></p></div>';
+  stage.innerHTML = html;
+
+  /* ---------------- Render ---------------- */
+  function render(t) {
+    // Opening: products travel the figure-8 while the line lands
+    var oIn = eo(seg(t, 0, 1.2)), oOut = 1 - eio(seg(t, 3.8, 4.6));
+    ORBIT.forEach(function (id, i) {
+      var s = i / ORBIT.length * Math.PI * 2 + t * .16, d = 1 + Math.sin(s) * Math.sin(s);
+      var x = 960 + 820 * Math.cos(s) / d, y = 540 + 820 * Math.sin(s) * Math.cos(s) / d * 1.25;
+      var depth = .78 + .22 * (0.5 + 0.5 * Math.cos(s * 2));
+      var clear = clamp((Math.abs(x - 960) - 380) / 260) + clamp((Math.abs(y - 540) - 250) / 120);   // keep the headline clear
+      put($('o' + i), oIn * oOut * (.5 + .5 * depth) * clamp(clear), x - 75, y - 59 + (1 - oIn) * 40, depth * (oOut * .2 + .8));
+    });
+    var ha = inout(t, 0.4, 4.4, .9), hb = inout(t, 1.3, 4.4, .9);
+    put($('heroK'), inout(t, .2, 4.4, .8), 0, (1 - eo(seg(t, .2, 1))) * 16);
+    put($('h1a'), ha, 0, (1 - eo(seg(t, .4, 1.3))) * 40);
+    $('h1a').style.display = 'inline-block'; $('h1b').style.display = 'inline-block';
+    put($('h1b'), hb, 0, (1 - eo(seg(t, 1.3, 2.2))) * 40);
+    put($('hero'), 1, 0, 0);
+
+    // Aisles: one word, three products cascading in depth
+    BEATS.forEach(function (b, j) {
+      var a = B0 + j * BL, z = a + BL + .2;
+      var wk = inout(t, a, z, .7);
+      put($('w' + j), wk, (1 - eo(seg(t, a, a + .8))) * -30 - eio(seg(t, z - .5, z)) * 30, 0);
+      [[1010, 300, -5], [1250, 210, 0], [1490, 330, 5]].forEach(function (p, k) {
+        var el = $('c' + j + '_' + k), st = a + .12 + k * .1;
+        var kin = eo(seg(t, st, st + .9)), kout = eio(seg(t, z - .55 + k * .05, z + .05 + k * .05));
+        var drift = (t - a) * -8;
+        put(el, Math.min(kin, 1 - kout), p[0] + (1 - kin) * 120, p[1] + (1 - kin) * 160 + drift - kout * 120, .92 + .08 * kin, p[2] * kin);
+        el.style.zIndex = k === 1 ? 3 : 2;
+      });
+    });
+
+    // Cart: six sellers, one order, deployed
+    var C0 = B0 + BEATS.length * BL + .1, C1 = C0 + 6.6;
+    put($('cw'), inout(t, C0, C1, .7), (1 - eo(seg(t, C0, C0 + .8))) * -30, 0);
+    var ck = inout(t, C0 + .2, C1, .8);
+    put($('cart'), ck, (1 - eo(seg(t, C0 + .2, C0 + 1.1))) * 80, 0);
+    var n = 0;
+    CART.forEach(function (c, i) {
+      var at = C0 + .7 + i * .38, k = eo(seg(t, at, at + .5));
+      put($('r' + i), k, (1 - k) * 40, 0);
+      if (t >= at) n++;
+    });
+    // Totals of CART: one-time = probes + installs + gateway, monthly = SIMs + app + messages
+    var cnt = eo(seg(t, C0 + .8, C0 + 3.2));
+    $('tOne').textContent = fmt(80500 * cnt);
+    $('tMon').textContent = fmt(11479 * cnt);
+    $('cartN').textContent = n + ' items · ' + Math.min(n, 6) + ' sellers';
+    var press = C0 + 3.6, dep = seg(t, press + .3, press + 2);
+    $('go').style.transform = 'scale(' + (t > press && t < press + .18 ? .97 : 1) + ')';
+    $('goBar').style.transform = 'scaleX(' + eio(dep) + ')';
+    $('goTxt').textContent = t < press ? 'Place order' : dep < 1 ? 'Deploying to your Cold chain app…' : '✓ Live · 20 devices reporting';
+
+    // Sellers
+    var S0 = C1 - .1, S1 = S0 + 5.4;
+    put($('sh'), inout(t, S0, S1, .8), 0, (1 - eo(seg(t, S0, S0 + .9))) * 30);
+    WHO.forEach(function (w, i) {
+      var st = S0 + .35 + i * .12, k = inout(t, st, S1 - .05 * (3 - i), .9);
+      put($('v' + i), k, 0, (1 - eo(seg(t, st, st + .9))) * 90 - eio(seg(t, S1 - .6, S1)) * 40);
+      var pk = eo(seg(t, S0 + 1.8 + i * .45, S0 + 2.3 + i * .45));
+      put($('vp' + i), pk, 0, (1 - pk) * 20, .96 + .04 * pk);
+    });
+
+    // Outro, then back to an empty stage for a seamless loop
+    var E0 = S1 - .1;
+    var ok = inout(t, E0, DURATION - .15, .9);
+    put($('out'), ok, 0, (1 - eo(seg(t, E0, E0 + 1))) * 30, 1 + seg(t, E0, DURATION) * .02);
+  }
+
+  /* ---------------- Playback ---------------- */
+  function fit() { var s = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = 'scale(' + s + ')'; }
+  window.seek = function (t) { render(Math.max(0, Math.min(DURATION, t))); };
+  window.FILM_DURATION = DURATION;
+  if (/capture/.test(location.search)) {
+    document.fonts.ready.then(function () { render(0); window.FILM_READY = true; });
+  } else {
+    fit(); addEventListener('resize', fit);
+    var t0 = null;
+    document.fonts.ready.then(function () {
+      requestAnimationFrame(function loop(now) { if (t0 === null) t0 = now; render(((now - t0) / 1000) % DURATION); requestAnimationFrame(loop); });
+    });
+  }
+})();
+</script>
+</body>
+</html>

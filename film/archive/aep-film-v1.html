@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the #8 AEP works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Source for the "How the #8 AEP works" film. Every frame is a pure function of time:
+   seek(t) renders the frame at t seconds, so the film can be exported frame by frame. */
+:root {
+  --ob: #05060A; --ob2: #0B0D14; --ob3: #141722; --po: #F4F2EE; --gr: #8A8F9C;
+  --sig: #5B7CFF; --ion: #5EE6C8; --emb: #FF8A4C; --line: rgba(255,255,255,.08);
+  --b: #5B7CFF;
+  --font: 'Inter Tight', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+body { font-family: var(--font); color: var(--po); -webkit-font-smoothing: antialiased; display: grid; place-items: center; }
+#stage {
+  position: relative; width: 1920px; height: 1080px; flex: none; overflow: hidden; transform-origin: center;
+  background: radial-gradient(1200px 700px at 78% 30%, #0F1636 0%, transparent 60%), radial-gradient(900px 600px at 10% 90%, rgba(94,230,200,.08), transparent 60%), var(--ob);
+}
+.abs { position: absolute; }
+svg { display: block; }
+
+/* Intro & outro */
+#intro, #outro { inset: 0; display: grid; place-items: center; align-content: center; text-align: center; gap: 28px; }
+.logo { fill: var(--po); color: var(--po); }
+#intro .logo { width: 150px; height: 128px; }
+#intro h1 { font-size: 112px; line-height: .98; letter-spacing: -0.055em; font-weight: 700; }
+#intro p, #outro p { font-size: 32px; color: var(--gr); letter-spacing: -0.01em; }
+.grad { background: linear-gradient(100deg, #5B7CFF, #5EE6C8 50%, #FF8A4C); -webkit-background-clip: text; background-clip: text; color: transparent; }
+#outro h2 { font-size: 124px; line-height: .98; letter-spacing: -0.055em; font-weight: 700; }
+#outro .cta { display: inline-flex; align-items: center; gap: 14px; height: 84px; padding: 0 44px; border-radius: 999px; background: var(--sig); color: #fff; font-size: 30px; font-weight: 650; box-shadow: 0 24px 80px -16px rgba(91,124,255,.8); }
+#outro .logo { width: 84px; height: 72px; margin-top: 18px; opacity: .9; }
+
+/* Captions */
+#cap { left: 160px; top: 64px; width: 1600px; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+#capStep { font-size: 22px; font-weight: 600; color: var(--ion); margin-bottom: 10px; display: block; }
+#capTitle { white-space: nowrap; font-size: 64px; line-height: 1; letter-spacing: -0.045em; font-weight: 700; }
+#capSub { font-size: 25px; color: var(--gr); max-width: 760px; text-align: right; line-height: 1.35; }
+
+/* App window */
+#win { left: 160px; top: 236px; width: 1600px; height: 790px; border-radius: 30px; overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.012)), #090B12;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 80px 160px -60px rgba(0,0,0,.95), 0 0 120px -40px rgba(91,124,255,.35); }
+.bar { height: 58px; display: flex; align-items: center; gap: 9px; padding: 0 24px; border-bottom: 1px solid var(--line); font-size: 17px; }
+.bar > i { width: 13px; height: 13px; border-radius: 50%; background: rgba(255,255,255,.14); }
+.bar em { font-style: normal; color: var(--gr); margin-left: 14px; }
+.bar b { margin-left: auto; font-size: 15px; font-weight: 600; padding: 7px 14px; border-radius: 999px; background: rgba(255,255,255,.06); color: var(--gr); }
+.body { display: grid; grid-template-columns: 290px 1fr 420px; height: 732px; }
+.rail { border-right: 1px solid var(--line); padding: 26px 18px; display: grid; align-content: start; gap: 6px; }
+.rail li { list-style: none; display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: center; padding: 14px 12px; border-radius: 16px; color: var(--gr); }
+.rail li span { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-size: 15px; font-weight: 600; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.18); }
+.rail li b { font-size: 20px; font-weight: 600; }
+.rail li.on { background: rgba(91,124,255,.13); color: var(--po); }
+.rail li.on span { background: var(--sig); color: #fff; box-shadow: 0 0 0 5px rgba(91,124,255,.2); }
+.rail li.done { color: var(--po); }
+.rail li.done span { background: var(--ion); color: var(--ob); box-shadow: none; }
+.main { position: relative; }
+.panel { position: absolute; inset: 0; padding: 34px 38px; display: grid; align-content: start; gap: 18px; }
+.ph { font-size: 34px; letter-spacing: -0.035em; font-weight: 650; }
+.note { font-size: 19px; padding: 16px 20px; border-radius: 16px; background: rgba(91,124,255,.09); color: rgba(244,242,238,.85); }
+.note b { color: var(--po); }
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 54px; padding: 0 28px; border-radius: 999px; background: var(--sig); color: #fff; font-size: 19px; font-weight: 600; justify-self: start; }
+.btn.light { background: var(--po); color: #0B0C10; }
+
+/* Panel 0: business profile */
+.inds { display: flex; flex-wrap: wrap; gap: 10px; }
+.inds i { font-style: normal; padding: 12px 20px; border-radius: 999px; font-size: 18px; color: var(--gr); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.14); }
+.inds i.on { background: var(--sig); color: #fff; box-shadow: 0 10px 30px -10px var(--sig); font-weight: 600; }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.kpi { display: grid; gap: 6px; padding: 22px; border-radius: 20px; background: rgba(255,255,255,.035); box-shadow: inset 0 0 0 1px var(--line); }
+.kpi span { font-size: 16px; color: var(--gr); font-weight: 600; }
+.kpi b { font-size: 54px; font-weight: 700; letter-spacing: -0.045em; line-height: 1; font-variant-numeric: tabular-nums; }
+.kpi small { font-size: 15px; color: var(--gr); }
+.kpi.hot { box-shadow: inset 0 0 0 1.5px rgba(91,124,255,.8), 0 20px 50px -30px var(--sig); background: rgba(91,124,255,.1); }
+.empty { flex: 1; display: grid; place-items: center; align-content: center; gap: 12px; text-align: center; padding: 0 18px; color: var(--mu); }
+.empty svg { width: 70px; height: 60px; fill: var(--fg); color: var(--fg); opacity: .25; }
+.empty b { font-size: 19px; color: var(--fg); }
+.empty small { font-size: 14px; line-height: 1.4; }
+
+/* Panel 1: outcomes */
+.ocg { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.oc { position: relative; display: grid; grid-template-columns: 52px 1fr; gap: 4px 16px; align-items: center; padding: 20px 56px 20px 20px; border-radius: 20px; background: rgba(255,255,255,.03); box-shadow: inset 0 0 0 1px var(--line); }
+.oc .ic { grid-row: span 2; width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: rgba(255,255,255,.05); }
+.oc .ic svg { width: 26px; height: 26px; }
+.oc b { font-size: 19px; font-weight: 600; line-height: 1.25; }
+.oc small { font-size: 15px; color: var(--gr); }
+.oc .tick { position: absolute; top: 16px; right: 16px; width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.2); display: grid; place-items: center; }
+.oc .tick svg { width: 15px; height: 15px; opacity: 0; }
+.oc.on { background: rgba(91,124,255,.13); box-shadow: inset 0 0 0 1.5px rgba(91,124,255,.75); }
+.oc.on .ic { background: var(--sig); }
+.oc.on .tick { background: var(--sig); box-shadow: none; }
+.oc.on .tick svg { opacity: 1; }
+.tray { display: flex; gap: 10px; flex-wrap: wrap; padding: 18px; border-radius: 20px; background: rgba(255,255,255,.025); box-shadow: inset 0 0 0 1px var(--line); align-items: center; }
+.tray > span { font-size: 16px; color: var(--gr); margin-right: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px 9px 10px; border-radius: 999px; background: rgba(91,124,255,.15); box-shadow: inset 0 0 0 1px rgba(91,124,255,.45); font-size: 17px; font-weight: 500; }
+.chip i { width: 26px; height: 26px; border-radius: 50%; background: var(--sig); display: grid; place-items: center; }
+.chip i svg { width: 15px; height: 15px; }
+
+/* Panel 2: blueprint */
+.bp { display: grid; gap: 8px; }
+.bp li { list-style: none; display: grid; grid-template-columns: 40px 1fr auto; gap: 16px; align-items: center; padding: 14px 20px; border-radius: 16px; background: rgba(255,255,255,.02); }
+.bp li.on { background: rgba(255,255,255,.05); }
+.bp .no { font-size: 15px; color: var(--gr); }
+.bp b { font-size: 19px; font-weight: 600; color: var(--gr); }
+.bp li.on b { color: var(--po); }
+.bp em { font-style: normal; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: rgba(94,230,200,.12); color: var(--ion); margin-left: 10px; }
+.sw { width: 56px; height: 32px; border-radius: 999px; background: rgba(255,255,255,.14); position: relative; }
+.sw i { position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+
+/* Panel 3: devices */
+.dv { display: grid; grid-template-columns: 128px 1fr auto; gap: 20px; align-items: center; padding: 16px; border-radius: 20px; background: rgba(255,255,255,.03); box-shadow: inset 0 0 0 1px var(--line); }
+.dv .art { height: 92px; border-radius: 14px; display: grid; place-items: center; position: relative; }
+.dv .art svg { width: 84%; height: 84%; }
+.dv b { font-size: 21px; font-weight: 600; display: block; }
+.dv small { display: block; font-size: 15px; color: var(--gr); margin-top: 4px; }
+.dv .why { color: var(--ion); font-size: 15px; font-weight: 600; margin-top: 6px; display: block; }
+.dv .q { font-size: 26px; font-weight: 650; padding: 10px 22px; border-radius: 999px; background: rgba(255,255,255,.06); font-variant-numeric: tabular-nums; }
+.best { position: absolute; left: 8px; bottom: 8px; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--ion); color: var(--ob); }
+.ob { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.ob li { list-style: none; padding: 16px; border-radius: 16px; background: rgba(255,255,255,.03); display: grid; gap: 8px; }
+.ob li i { width: 28px; height: 28px; border-radius: 50%; box-shadow: inset 0 0 0 2px rgba(255,255,255,.22); display: grid; place-items: center; }
+.ob li i svg { width: 16px; height: 16px; opacity: 0; }
+.ob li b { font-size: 17px; font-weight: 600; }
+.ob li em { font-style: normal; font-size: 15px; color: var(--ion); font-variant-numeric: tabular-nums; min-height: 20px; }
+.ob li.done i { background: var(--ion); box-shadow: none; }
+.ob li.done i svg { opacity: 1; }
+.ob li.act { background: rgba(91,124,255,.12); }
+.ob li.act i { box-shadow: none; border: 3px solid var(--sig); border-right-color: transparent; }
+.obh { display: flex; align-items: center; justify-content: space-between; }
+.obh span { font-size: 18px; color: var(--gr); font-weight: 600; }
+
+/* Panel 4: workflows */
+.wf { display: grid; gap: 14px; padding: 18px 22px; border-radius: 20px; background: rgba(255,255,255,.04); box-shadow: inset 0 0 0 1px rgba(91,124,255,.35); }
+.wf .top { display: flex; align-items: center; justify-content: space-between; }
+.wf .tag { display: block; font-size: 14px; color: var(--ion); font-weight: 600; }
+.wf .top b { font-size: 21px; font-weight: 600; }
+.flow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.node { font-size: 16px; padding: 9px 15px; border-radius: 12px; background: rgba(255,255,255,.06); }
+.node.t { background: rgba(255,138,76,.15); color: #FFC3A3; box-shadow: inset 0 0 0 1px rgba(255,138,76,.35); }
+.node.lit { background: var(--sig); color: #fff; box-shadow: 0 0 30px -4px var(--sig); }
+.node.t.lit { background: var(--emb); color: #fff; box-shadow: 0 0 30px -4px var(--emb); }
+.arr { width: 20px; height: 2px; background: rgba(255,255,255,.3); }
+
+/* Panel 5: brand */
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 28px; }
+.f { display: grid; gap: 12px; }
+.f > span { font-size: 16px; font-weight: 600; color: var(--gr); }
+.inp { height: 58px; display: flex; align-items: center; padding: 0 20px; border-radius: 14px; border: 1.5px solid rgba(255,255,255,.16); background: rgba(255,255,255,.04); font-size: 21px; }
+.inp.focus { border-color: var(--sig); }
+.caret { display: inline-block; width: 2px; height: 26px; background: var(--po); margin-left: 2px; }
+.sws { display: flex; gap: 12px; }
+.sws i { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 0 3px #090B12, 0 0 0 4px transparent; }
+.sws i.on { box-shadow: 0 0 0 3px #090B12, 0 0 0 5px currentColor; }
+.seg { display: inline-flex; gap: 4px; padding: 5px; border-radius: 999px; background: rgba(255,255,255,.06); justify-self: start; }
+.seg i { font-style: normal; padding: 11px 22px; border-radius: 999px; font-size: 17px; color: var(--gr); }
+.seg i.on { background: var(--po); color: #0B0C10; font-weight: 600; }
+.chips { display: flex; gap: 8px; }
+.chips i { font-style: normal; padding: 10px 18px; border-radius: 999px; font-size: 17px; background: rgba(91,124,255,.16); box-shadow: inset 0 0 0 1px rgba(91,124,255,.6); }
+
+/* Panel 6: go live */
+.dns { display: grid; gap: 14px; padding: 20px; border-radius: 20px; background: rgba(255,255,255,.03); box-shadow: inset 0 0 0 1px var(--line); }
+.dns code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 18px; padding: 14px 16px; border-radius: 12px; background: #06070B; box-shadow: inset 0 0 0 1px var(--line); }
+.dns code b { color: var(--ion); margin-right: 12px; }
+.ok { display: flex; align-items: center; gap: 10px; color: var(--ion); font-weight: 600; font-size: 19px; }
+.ok svg { width: 22px; height: 22px; }
+.spin { width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--sig); border-right-color: transparent; }
+.log { display: grid; gap: 12px; padding: 22px; border-radius: 20px; background: #06070B; box-shadow: inset 0 0 0 1px var(--line); font-size: 19px; }
+.log li { list-style: none; display: flex; align-items: center; gap: 14px; }
+.log li i { width: 18px; height: 18px; border-radius: 50%; background: var(--ion); }
+.log li.live { color: var(--ion); font-weight: 700; }
+
+/* Preview phone */
+.pvcol { border-left: 1px solid var(--line); display: grid; justify-items: center; align-content: center; gap: 22px; position: relative;
+  background: radial-gradient(420px 520px at 50% 55%, color-mix(in srgb, var(--b) 24%, transparent), transparent 70%); }
+.phone { --bg: #07080D; --fg: #F4F2EE; --card: #131620; --mu: #8A8F9C;
+  width: 316px; height: 640px; border-radius: 50px; padding: 20px 16px 14px; background: var(--bg); color: var(--fg);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.16), inset 0 0 0 7px #000, inset 0 0 0 8px rgba(255,255,255,.08), 0 50px 90px -30px rgba(0,0,0,.95);
+  display: flex; flex-direction: column; gap: 11px; }
+.phone.light { --bg: #F6F5F1; --fg: #0B0C10; --card: #fff; --mu: #6B7080; }
+.st { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; padding: 0 10px; }
+.badge { font-size: 12px; padding: 3px 9px; border-radius: 999px; background: color-mix(in srgb, var(--fg) 10%, transparent); }
+.badge.live { background: var(--ion); color: #05060A; }
+.hd { display: flex; align-items: center; gap: 11px; padding: 2px 6px; }
+.lg { width: 38px; height: 38px; border-radius: 12px; background: var(--b); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 18px; }
+.hd b { font-size: 19px; letter-spacing: -0.02em; display: block; }
+.hd small { font-size: 12px; color: var(--mu); }
+.card { padding: 14px 15px; border-radius: 20px; background: var(--card); display: grid; gap: 5px; }
+.card small { font-size: 12px; color: var(--mu); }
+.read b { font-size: 40px; font-weight: 650; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.read b span { font-size: 17px; color: var(--mu); margin-left: 3px; font-weight: 500; }
+.read em { font-style: normal; font-size: 13px; font-weight: 600; color: var(--b); }
+.read.alert { box-shadow: inset 0 0 0 2px var(--emb); }
+.read.alert b, .read.alert em { color: var(--emb); }
+.row { display: flex; justify-content: space-between; font-size: 14px; padding: 12px 15px; border-radius: 16px; background: var(--card); }
+.row b { color: var(--b); }
+.bar2 { height: 6px; border-radius: 6px; background: color-mix(in srgb, var(--fg) 10%, transparent); overflow: hidden; }
+.bar2 i { display: block; height: 100%; background: var(--b); border-radius: inherit; }
+.devs b { font-size: 17px; }
+.bars { display: flex; align-items: end; gap: 7px; height: 66px; padding: 4px 6px 0; }
+.bars span { flex: 1; border-radius: 5px; background: linear-gradient(var(--b), color-mix(in srgb, var(--b) 20%, transparent)); }
+.tabs { margin-top: auto; display: flex; justify-content: space-around; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--fg) 8%, transparent); }
+.tabs span { display: grid; justify-items: center; gap: 4px; font-size: 11.5px; color: var(--mu); }
+.tabs i { width: 20px; height: 20px; border-radius: 7px; background: color-mix(in srgb, var(--fg) 14%, transparent); }
+.tabs .on { color: var(--b); font-weight: 600; }
+.tabs .on i { background: var(--b); }
+.url { display: inline-flex; align-items: center; gap: 10px; font-size: 16px; padding: 8px 16px; border-radius: 999px; background: rgba(255,255,255,.06); }
+.url i { width: 9px; height: 9px; border-radius: 50%; background: var(--ion); box-shadow: 0 0 12px var(--ion); }
+.ring { position: absolute; left: 50%; top: 50%; width: 360px; height: 680px; margin: -360px 0 0 -180px; border-radius: 60px; border: 2px solid var(--b); pointer-events: none; }
+
+/* Cursor */
+#cursor { width: 34px; height: 34px; left: 0; top: 0; z-index: 10; filter: drop-shadow(0 6px 10px rgba(0,0,0,.6)); }
+#click { width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; border: 3px solid rgba(255,255,255,.85); z-index: 9; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 96 82">
+    <polygon points="31,18 41,18 25,80 15,80"/><polygon points="53,18 63,18 47,80 37,80"/>
+    <polygon points="10,32 72,32 69.5,42 7.5,42"/><polygon points="4,56 66,56 63.5,66 1.5,66"/>
+    <g fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="84" cy="7.6" rx="5.6" ry="5.2"/><ellipse cx="84" cy="19.6" rx="6.8" ry="6.6"/></g>
+  </symbol>
+  <symbol id="ck" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div id="stage">
+  <div id="intro" class="abs">
+    <svg class="logo"><use href="#logo"/></svg>
+    <h1>How the #8 AEP works</h1>
+    <p>From the outcome you want to a live IoT application. No code.</p>
+  </div>
+
+  <div id="cap" class="abs">
+    <div><span id="capStep"></span><h2 id="capTitle"></h2></div>
+    <p id="capSub"></p>
+  </div>
+
+  <div id="win" class="abs">
+    <div class="bar"><i></i><i></i><i></i><em>#8 AEP · Outcome Studio</em><b id="status">Draft</b></div>
+    <div class="body">
+      <ol class="rail" id="rail"></ol>
+      <div class="main" id="main"></div>
+      <div class="pvcol" id="pvcol">
+        <span class="ring" id="ring"></span>
+        <div class="phone" id="phone"></div>
+        <span class="url" id="url"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="outro" class="abs">
+    <h2>Your outcome.<br><span class="grad">Live this week.</span></h2>
+    <p>Build it yourself in the #8 AEP. No code, free sandbox.</p>
+    <div><span class="cta">Start free in the #8 AEP</span></div>
+    <svg class="logo"><use href="#logo"/></svg>
+  </div>
+
+  <div id="click" class="abs"></div>
+  <svg id="cursor" class="abs" viewBox="0 0 24 24"><path d="M4 2.5l15 9.2-6.6 1.5 3.6 7.1-2.9 1.4-3.5-7.2-5 4.3z" fill="#fff" stroke="#05060A" stroke-width="1.3" stroke-linejoin="round"/></svg>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var DURATION = 81;
+  var OFF = 9; // the business chapter runs before the outcome flow
+  var $ = function (s) { return document.querySelector(s); };
+  var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+  /* ---------- timing helpers ---------- */
+  function clamp(x) { return Math.max(0, Math.min(1, x)); }
+  function seg(t, a, b) { return clamp((t - a) / (b - a)); }
+  function eo(x) { return 1 - Math.pow(1 - x, 3); }              // ease-out
+  function eio(x) { return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; } // ease-in-out
+  function vis(el, t, a, b, fadeIn, fadeOut, rise) {
+    fadeIn = fadeIn || .5; fadeOut = fadeOut || .4; rise = rise == null ? 24 : rise;
+    var o = Math.min(eo(seg(t, a, a + fadeIn)), 1 - seg(t, b - fadeOut, b));
+    el.style.opacity = o;
+    el.style.transform = 'translateY(' + ((1 - eo(seg(t, a, a + fadeIn))) * rise) + 'px)';
+    el.style.visibility = o > .001 ? 'visible' : 'hidden';
+    return o;
+  }
+  function fmt(n) { return Math.round(n).toLocaleString('en-IN'); }
+  function typed(text, t, a, cps) { return text.slice(0, Math.max(0, Math.floor((t - a) * (cps || 12)))); }
+
+  /* ---------- scenes ---------- */
+  var SCENES = [
+    { a: 6, b: 15.2, step: 'Step 1 of 7', title: 'Tell us about your business', sub: 'Industry, sites, assets and people. The AEP sizes everything to fit.' },
+    { a: 15, b: 25.2, step: 'Step 2 of 7', title: 'Choose your outcomes', sub: 'Pick one or several goals, or describe your own in plain words.' },
+    { a: 25.2, b: 34.2, step: 'Step 3 of 7', title: 'Only the apps you need', sub: 'The AEP switches on just the applications your outcomes require.' },
+    { a: 34.2, b: 46.2, step: 'Step 4 of 7', title: 'Connect your devices', sub: 'Certified devices are recommended for you. Onboarding registers, secures and connects every one.' },
+    { a: 46.2, b: 57.2, step: 'Step 5 of 7', title: 'Operations on autopilot', sub: 'Ready-made workflows turn every breach into a ticket, a dispatch and a message.' },
+    { a: 57.2, b: 65.2, step: 'Step 6 of 7', title: 'Make it yours', sub: 'Your app name, colours, theme and platforms.' },
+    { a: 65.2, b: 75.4, step: 'Step 7 of 7', title: 'Launch on your own domain', sub: 'Connect your domain and launch. Teams and customers are live the same day.' }
+  ];
+  function sceneAt(t) { for (var i = 0; i < SCENES.length; i++) if (t < SCENES[i].b) return i; return SCENES.length - 1; }
+
+  var ICON = {
+    cold: '<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/>',
+    meter: '<rect x="5" y="3" width="14" height="18" rx="3"/><rect x="8" y="6" width="8" height="4" rx="1"/><circle cx="12" cy="15" r="2.5"/>',
+    fleet: '<path d="M2 7h11v9H2zM13 10h4l3 3v3h-7z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/>',
+    health: '<path d="M2 12h4l2-5 4 10 2-5h8"/>',
+    factory: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>',
+    building: '<path d="M4 21V5h8v16M12 21V9h8v12M7 8h2M7 12h2M7 16h2M15 12h2M15 16h2"/>'
+  };
+  function icon(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + ICON[k] + '</svg>'; }
+  var CK = '<svg><use href="#ck"/></svg>';
+
+  var OUTCOMES = [
+    ['cold', 'Zero spoiled stock across our cold chain', 'Cold chain'],
+    ['meter', 'Read every meter remotely, cut field visits 90%', 'Utilities'],
+    ['fleet', 'Know where every vehicle is, stop data overruns', 'Fleet & logistics'],
+    ['health', 'Keep critical medical equipment ready', 'Healthcare'],
+    ['factory', 'Fix machine faults before downtime', 'Manufacturing'],
+    ['building', 'Run every building without manual checks', 'Smart buildings']
+  ];
+  var APPS = [['01', 'Device Management', 1], ['02', 'SIM Management', 1], ['03', 'Device Gateway', 1], ['04', 'Asset Management', 1],
+              ['05', 'IoT CRM', 0], ['06', 'Notifications & Ticketing', 1], ['07', 'Device Installation App', 1], ['08', 'Customer Applications', 1]];
+  var OB = ['Register', 'Secure', 'Connect', 'Install', 'First data'];
+  var FLOWS = [
+    ['Cold chain', 'Temperature breach', ['Above 4°C for 5 min', 'P1 ticket', 'Dispatch engineer', 'WhatsApp the site']],
+    ['Fleet & logistics', 'Left the geofence', ['Exits depot zone', 'Alert security', 'Track live']],
+    ['Fleet & logistics', 'SIM data spike', ['3× normal usage', 'Throttle the SIM', 'Notify manager']]
+  ];
+  var SWATCH = ['#5B7CFF', '#5EE6C8', '#FF8A4C', '#C77DFF', '#F2C14E'];
+  var INDUSTRIES = ['Cold chain & logistics', 'Utilities', 'Manufacturing', 'Healthcare', 'Smart buildings', 'Agriculture', 'Smart cities', 'Other'];
+  var KPIS = [['Sites', 12, 'Warehouses and depots'], ['Assets to monitor', 272, '120 cold rooms · 152 vehicles'], ['Field team', 40, 'Engineers and drivers'], ['Customers', 300, 'Accounts using your app']];
+  var STEPS = ['Business', 'Outcomes', 'Blueprint', 'Devices', 'Automate', 'Brand', 'Go live'];
+
+  /* ---------- static markup ---------- */
+  $('#rail').innerHTML = STEPS.map(function (s, i) { return '<li><span>0' + (i + 1) + '</span><b>' + s + '</b></li>'; }).join('');
+  $('#main').innerHTML =
+    '<div class="panel" id="pb"><div class="ph">Tell us about your business</div>' +
+      '<div class="f"><span>Industry</span><div class="inds">' + INDUSTRIES.map(function (x, i) { return '<i id="in' + i + '">' + x + '</i>'; }).join('') + '</div></div>' +
+      '<div class="kpis">' + KPIS.map(function (k, i) { return '<div class="kpi" id="kp' + i + '"><span>' + k[0] + '</span><b id="kv' + i + '">0</b><small>' + k[2] + '</small></div>'; }).join('') + '</div>' +
+      '<div class="note" id="bizNote"><b>Sized for you:</b> devices, data plans and licences are matched to 12 sites and 272 assets.</div></div>' +
+    '<div class="panel" id="p0"><div class="ph">What should your things achieve?</div><div class="ocg">' +
+      OUTCOMES.map(function (o, i) { return '<div class="oc" id="oc' + i + '"><span class="ic">' + icon(o[0]) + '</span><b>' + o[1] + '</b><small>' + o[2] + '</small><span class="tick">' + CK + '</span></div>'; }).join('') +
+      '</div><div class="tray" id="tray"><span>Your outcomes</span><span class="chip" id="chip0"><i>' + icon('cold') + '</i>Zero spoiled stock</span><span class="chip" id="chip1"><i>' + icon('fleet') + '</i>Track every vehicle</span></div>' +
+      '<span class="btn" id="next0">Next: Blueprint</span></div>' +
+    '<div class="panel" id="p1"><div class="ph">Only what your outcomes need</div><div class="note" id="bpNote"></div><ol class="bp">' +
+      APPS.map(function (a, i) { return '<li id="bp' + i + '"><span class="no">' + a[0] + '</span><b>' + a[1] + (a[2] ? '<em>Recommended</em>' : '') + '</b><span class="sw"><i></i></span></li>'; }).join('') + '</ol></div>' +
+    '<div class="panel" id="p2"><div class="ph">Connect your devices</div>' +
+      '<div class="dv" id="dv0"><span class="art" style="background:radial-gradient(120% 90% at 80% 0%, rgba(94,230,200,.45), transparent 70%), #0E111B">' +
+        '<svg viewBox="0 0 120 90" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="22" y="22" width="40" height="52" rx="8"/><rect x="30" y="32" width="24" height="12" rx="3" stroke="#5EE6C8"/><path d="M62 48c14 0 14 14 28 14h6"/><rect x="96" y="54" width="5" height="24" rx="2.5"/></svg><span class="best">Best match</span></span>' +
+        '<div><b>ColdSense T2 Temperature Probe</b><small>Kelvra Instruments · ★ 4.8 · NB-IoT · MQTT</small><span class="why">Recommended for Cold chain</span></div><span class="q">120</span></div>' +
+      '<div class="dv" id="dv1"><span class="art" style="background:radial-gradient(120% 90% at 80% 0%, rgba(255,138,76,.45), transparent 70%), #0E111B">' +
+        '<svg viewBox="0 0 120 90" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="28" y="30" width="46" height="46" rx="15"/><path d="M51 66s-10-10-10-17a10 10 0 0 1 20 0c0 7-10 17-10 17z" stroke="#FF8A4C"/><path d="M80 26a14 14 0 0 1 10 12M84 16a24 24 0 0 1 16 22" stroke="#FF8A4C"/></svg></span>' +
+        '<div><b>Orbit Mini GPS Tracker</b><small>Orbitrack · ★ 4.7 · LTE-M · GNSS</small><span class="why">Recommended for Cold chain & Fleet</span></div><span class="q">152</span></div>' +
+      '<div class="obh"><span id="obLabel">Onboarding · 272 devices</span><span class="btn" id="obBtn">Onboard 272 devices</span></div>' +
+      '<ol class="ob">' + OB.map(function (s, i) { return '<li id="ob' + i + '"><i>' + CK + '</i><b>' + s + '</b><em></em></li>'; }).join('') + '</ol></div>' +
+    '<div class="panel" id="p3"><div class="ph">Put operations on autopilot</div><div class="note"><b>Ready-made workflows</b>, built and tested by #8 for your outcomes. Switch them on, or build your own.</div>' +
+      FLOWS.map(function (f, i) {
+        return '<div class="wf" id="wf' + i + '"><div class="top"><div><span class="tag">' + f[0] + '</span><b>' + f[1] + '</b></div><span class="sw"><i></i></span></div><div class="flow">' +
+          f[2].map(function (n, k) { return (k ? '<span class="arr"></span>' : '') + '<span class="node' + (k === 0 ? ' t' : '') + '" id="n' + i + '_' + k + '">' + n + '</span>'; }).join('') + '</div></div>';
+      }).join('') + '</div>' +
+    '<div class="panel" id="p4"><div class="ph">Make it yours</div><div class="fields">' +
+      '<div class="f"><span>App name</span><div class="inp" id="nameInp"></div></div>' +
+      '<div class="f"><span>Brand colour</span><div class="sws">' + SWATCH.map(function (c, i) { return '<i id="sw' + i + '" style="background:' + c + ';color:' + c + '"></i>'; }).join('') + '</div></div>' +
+      '<div class="f"><span>Theme</span><div class="seg"><i id="thD">Dark</i><i id="thL">Light</i></div></div>' +
+      '<div class="f"><span>Platforms</span><div class="chips"><i>iOS</i><i>Android</i><i>Web</i></div></div></div></div>' +
+    '<div class="panel" id="p5"><div class="ph">Launch on your own domain</div>' +
+      '<div class="dns"><div class="inp" id="domInp"></div><code id="cname"><b>CNAME</b>ops → edge.hash8.app</code><div class="ok" id="verify"></div></div>' +
+      '<span class="btn" id="launchBtn">Launch FreshHub</span><ol class="log" id="log"></ol></div>';
+
+  var LOG = ['Creating your tenant, teams and roles', 'Switching on 7 applications', 'Starting 5 workflows', 'Building iOS, Android and web apps', 'Publishing to ops.freshcart.in with SSL', 'Live'];
+  $('#log').innerHTML = LOG.map(function (l, i) { return '<li id="lg' + i + '"' + (i === LOG.length - 1 ? ' class="live"' : '') + '><i></i>' + l + '</li>'; }).join('');
+
+  /* ---------- cursor path: [time, target selector or point, click] ---------- */
+  var PATH = [
+    [6.0, { x: 1500, y: 900 }], [7.6, '#in0'], [7.9, '#in0', 1], [10.4, '#kp1'], [12.6, '#kp3'], [14.4, { x: 1150, y: 980 }],
+    [17.4, '#oc0'], [17.7, '#oc0', 1], [19.3, '#oc2'], [19.6, '#oc2', 1],
+    [22.6, '#next0'], [23.0, '#next0', 1],
+    [31.6, '#bp4 .sw'], [33.0, { x: 1200, y: 980 }],
+    [37.0, '#obBtn'], [37.4, '#obBtn', 1],
+    [48.8, '#wf2 .sw'], [49.2, '#wf2 .sw', 1], [51, { x: 1240, y: 1000 }],
+    [57.8, '#nameInp'], [58.1, '#nameInp', 1], [60.4, '#sw1'], [60.7, '#sw1', 1], [61.8, '#thL'], [62.1, '#thL', 1],
+    [65.8, '#domInp'], [66.1, '#domInp', 1], [69.4, '#launchBtn'], [69.8, '#launchBtn', 1], [72, { x: 1500, y: 1000 }]
+  ];
+  var CLICKS = PATH.filter(function (p) { return p[2]; }).map(function (p) { return p[0]; });
+  var PANELS = ['pb', 'p0', 'p1', 'p2', 'p3', 'p4', 'p5'];
+
+  function center(sel) {
+    var st = $('#stage').getBoundingClientRect(), s = st.width / 1920;
+    var r = $(sel).getBoundingClientRect();
+    return { x: (r.left - st.left + r.width / 2) / s, y: (r.top - st.top + r.height / 2) / s };
+  }
+
+  /* ---------- render one frame ---------- */
+  function render(t) {
+    var sc = sceneAt(t);
+    var u = t - OFF; // time on the original outcome-to-live timeline
+
+    // intro / outro
+    var io = Math.min(eo(seg(t, .3, 1.4)), 1 - seg(t, 5, 5.9));
+    $('#intro').style.opacity = io;
+    $('#intro').style.transform = 'scale(' + (1 + (1 - io) * .04) + ')';
+    var oo = eo(seg(t, 75.6, 76.8));
+    $('#outro').style.opacity = oo;
+    $('#outro').style.transform = 'translateY(' + (1 - oo) * 30 + 'px)';
+
+    // window
+    var wIn = eo(seg(t, 5.4, 6.6)), wOut = seg(t, 75, 75.8);
+    var win = $('#win');
+    win.style.opacity = Math.min(wIn, 1 - wOut);
+    win.style.transform = 'translateY(' + ((1 - wIn) * 60) + 'px) scale(' + (1 - wOut * .06) + ')';
+    win.style.visibility = t > 5.3 && t < 75.9 ? 'visible' : 'hidden';
+
+    // captions
+    var S = SCENES[sc], capO = Math.min(eo(seg(t, S.a, S.a + .6)), 1 - seg(t, S.b - .4, S.b));
+    if (t < 6 || t > 75.4) capO = 0;
+    $('#cap').style.opacity = capO;
+    $('#cap').style.transform = 'translateY(' + (1 - eo(seg(t, S.a, S.a + .6))) * 16 + 'px)';
+    $('#capStep').textContent = S.step; $('#capTitle').textContent = S.title; $('#capSub').textContent = S.sub;
+
+    // rail
+    $$('#rail li').forEach(function (li, i) {
+      li.className = i === sc ? 'on' : i < sc ? 'done' : '';
+      li.querySelector('span').innerHTML = i < sc ? '✓' : '0' + (i + 1);
+    });
+
+    // panels: cross-fade
+    PANELS.forEach(function (id, p) {
+      var P = SCENES[p], el = $('#' + id);
+      var o = Math.min(eo(seg(t, P.a, P.a + .5)), 1 - seg(t, P.b - .35, P.b));
+      if (p === PANELS.length - 1) o = eo(seg(t, P.a, P.a + .5));
+      el.style.opacity = o;
+      el.style.transform = 'translateX(' + (1 - eo(seg(t, P.a, P.a + .5))) * 30 + 'px)';
+      el.style.visibility = o > .001 ? 'visible' : 'hidden';
+    });
+
+    // scene 1: business profile
+    INDUSTRIES.forEach(function (x, i) { $('#in' + i).classList.toggle('on', i === 0 && t >= 7.9); });
+    KPIS.forEach(function (k, i) {
+      var a = 8.6 + i * .7;
+      vis($('#kp' + i), t, a - .3, 99, .4, .1, 12);
+      $('#kv' + i).textContent = fmt(k[1] * eo(seg(t, a, a + 1.4)));
+      $('#kp' + i).classList.toggle('hot', (i === 1 && t >= 10 && t < 12) || (i === 3 && t >= 12.2 && t < 14));
+    });
+    vis($('#bizNote'), t, 12.4, 99, .5, .1, 10);
+
+    // scene 2: outcomes
+    $('#oc0').classList.toggle('on', u >= 8.7);
+    $('#oc2').classList.toggle('on', u >= 10.6);
+    vis($('#tray'), u, 8.8, 99, .4, .1, 10);
+    vis($('#chip0'), u, 8.8, 99, .35, .1, 8);
+    vis($('#chip1'), u, 10.7, 99, .35, .1, 8);
+    $('#next0').style.transform = 'scale(' + (u > 14 && u < 14.25 ? .96 : 1) + ')';
+
+    // scene 3: blueprint switches on one by one
+    var onCount = 0;
+    APPS.forEach(function (a, i) {
+      var at = 17.2 + i * .65, isOn = a[2] && u >= at;
+      if (isOn) onCount++;
+      var li = $('#bp' + i), k = a[2] ? eo(seg(u, at, at + .3)) : 0;
+      li.classList.toggle('on', isOn);
+      li.querySelector('.sw').style.background = 'color-mix(in srgb, #5B7CFF ' + (k * 100) + '%, rgba(255,255,255,.14))';
+      li.querySelector('.sw i').style.transform = 'translateX(' + k * 24 + 'px)';
+    });
+    $('#bpNote').innerHTML = '<b>' + onCount + ' of 8</b> applications switched on for 2 outcomes. IoT CRM stays off: these outcomes don’t need it.';
+
+    // scene 4: devices + onboarding
+    vis($('#dv0'), u, 25.8, 99, .5, .1, 20);
+    vis($('#dv1'), u, 26.3, 99, .5, .1, 20);
+    var obStart = 28.5, obStep = 1.4, obDone = Math.floor((u - obStart) / obStep);
+    OB.forEach(function (s, i) {
+      var li = $('#ob' + i), done = u >= obStart && i < obDone, act = u >= obStart && i === obDone && obDone < 5;
+      li.className = done ? 'done' : act ? 'act' : '';
+      li.querySelector('i').style.transform = act ? 'rotate(' + ((u * 540) % 360) + 'deg)' : 'none';
+      li.querySelector('em').textContent = done ? '272 / 272' : act ? fmt(272 * ((u - obStart - i * obStep) / obStep)) + ' / 272' : '';
+    });
+    var onboarded = u >= obStart + 5 * obStep;
+    $('#obBtn').textContent = u < obStart ? 'Onboard 272 devices' : onboarded ? 'All 272 onboarded' : 'Onboarding…';
+    $('#obBtn').style.background = onboarded ? '#5EE6C8' : '';
+    $('#obBtn').style.color = onboarded ? '#05060A' : '';
+
+    // scene 5: workflows
+    FLOWS.forEach(function (f, i) {
+      var el = $('#wf' + i);
+      vis(el, u, 38 + i * .5, 99, .5, .1, 18);
+      var k = i < 2 ? 1 : eo(seg(u, 40.2, 40.5));
+      el.querySelector('.sw').style.background = 'color-mix(in srgb, #5B7CFF ' + (k * 100) + '%, rgba(255,255,255,.14))';
+      el.querySelector('.sw i').style.transform = 'translateX(' + k * 24 + 'px)';
+    });
+    FLOWS[0][2].forEach(function (n, k) { $('#n0_' + k).classList.toggle('lit', u >= 42 + k * .9 && u < 47.5); });
+
+    // scene 6: brand
+    var name = u < 49.2 ? 'FreshTrack' : u < 49.6 ? '' : typed('FreshHub', u, 49.6, 9);
+    var typing = u >= 49.1 && u < 51.3;
+    $('#nameInp').innerHTML = name + (typing && Math.floor(u * 2.5) % 2 === 0 ? '<span class="caret"></span>' : '');
+    $('#nameInp').classList.toggle('focus', typing);
+    var colorIdx = u >= 51.7 ? 1 : 0;
+    SWATCH.forEach(function (c, i) { $('#sw' + i).classList.toggle('on', i === colorIdx); });
+    var light = u >= 53.1 && u < 56.2;
+    $('#thD').classList.toggle('on', !light); $('#thL').classList.toggle('on', light);
+
+    // scene 7: go live
+    var dom = typed('ops.freshcart.in', u, 57.2, 11);
+    var domTyping = u >= 57.1 && u < 59;
+    $('#domInp').innerHTML = '<span style="color:#8A8F9C">https://</span>' + dom + (domTyping && Math.floor(u * 2.5) % 2 === 0 ? '<span class="caret"></span>' : '');
+    $('#domInp').classList.toggle('focus', domTyping);
+    vis($('#cname'), u, 58.8, 99, .4, .1, 8);
+    var verified = u >= 60;
+    $('#verify').innerHTML = u < 58.9 ? '' : verified ? CK.replace('<svg>', '<svg viewBox="0 0 24 24">') + 'Domain verified and SSL certificate issued'
+      : '<span class="spin" style="transform:rotate(' + ((u * 540) % 360) + 'deg)"></span><span style="color:#AFC0FF">Checking DNS…</span>';
+    $('#launchBtn').style.opacity = u >= 61 ? 0 : 1;
+    $('#launchBtn').style.display = u >= 61.2 ? 'none' : '';
+    vis($('#log'), u, 61.2, 99, .4, .1, 10);
+    LOG.forEach(function (l, i) { vis($('#lg' + i), u, 61.4 + i * .6, 99, .3, .1, 6); });
+    var live = u >= 61.4 + 5 * .6;
+
+    // status pill
+    var status = $('#status');
+    status.textContent = live ? 'Live' : u >= 61.2 ? 'Launching…' : 'Draft';
+    status.style.background = live ? '#5EE6C8' : '';
+    status.style.color = live ? '#05060A' : '';
+
+    // phone preview
+    var color = SWATCH[colorIdx];
+    $('#win').style.setProperty('--b', color);
+    var phone = $('#phone');
+    phone.className = 'phone' + (light ? ' light' : '');
+    if (u < 8.7) {
+      phone.innerHTML = '<div class="st"><span>9:41</span><span class="badge">Preview</span></div>' +
+        '<div class="empty"><svg viewBox="0 0 96 82"><use href="#logo"/></svg><b>Your app appears here</b>' +
+        '<small>' + (t >= 7.9 ? 'Cold chain & logistics · ' + fmt(272 * eo(seg(t, 9.3, 10.7))) + ' assets · 12 sites' : 'Tell us about your business to begin') + '</small></div>';
+      $('#url').innerHTML = 'yourapp.hash8.app';
+    } else {
+      var temp = 3.5 + Math.sin(u * 1.3) * .25;
+      var alert = u >= 43 && u < 46.5;
+      if (alert) temp = 4.6 + Math.sin(u * 2) * .1;
+      var devOnline = onboarded ? 272 : u >= obStart ? Math.round(272 * clamp((u - obStart) / (5 * obStep))) : 0;
+      var appName = u < 49.2 ? 'FreshTrack' : (name || '');
+      phone.innerHTML =
+        '<div class="st"><span>9:41</span><span class="badge' + (live ? ' live' : '') + '">' + (live ? 'Live' : 'Preview') + '</span></div>' +
+        '<div class="hd"><span class="lg">' + (appName.charAt(0) || 'F') + '</span><div><b>' + (appName || '&nbsp;') + '</b><small>Customer app · 12 sites</small></div></div>' +
+        '<div class="card read' + (alert ? ' alert' : '') + '"><small>Temperature · Cold Room 14</small><b>' + temp.toFixed(1) + '<span>°C</span></b><em>' +
+          (alert ? 'P1 ticket opened · engineer on the way' : u >= 46.5 && u < 48.2 ? 'Resolved in 41 min' : 'Within your limit of 4.0 °C') + '</em></div>' +
+        (u >= 10.6 ? '<div class="row"><span>Fleet · Vehicles moving</span><b>' + (124 + Math.round(Math.sin(u) * 3)) + ' of 152</b></div>' : '') +
+        '<div class="card devs"><small>Assets monitored</small><b>' + (u < obStart ? '272 waiting to onboard' : fmt(devOnline) + ' of 272 online') + '</b><span class="bar2"><i style="width:' + (devOnline / 272 * 100) + '%"></i></span></div>' +
+        '<div class="bars">' + [42, 58, 36, 70, 55, 82, 64, 48].map(function (h, i) { return '<span style="height:' + (h + Math.sin(u * 1.4 + i) * 6) + '%"></span>'; }).join('') + '</div>' +
+        '<nav class="tabs"><span class="on"><i></i>Home</span><span><i></i>Assets</span><span><i></i>Alerts</span></nav>';
+      $('#url').innerHTML = (live ? '<i></i>' : '') + (u >= 59 ? 'ops.freshcart.in' : (appName || 'freshhub').toLowerCase() + '.hash8.app');
+    }
+    var ring = $('#ring');
+    if (live) { var rp = ((u - 64.4) % 1.8) / 1.8; ring.style.opacity = (1 - rp) * .8; ring.style.transform = 'scale(' + (.92 + rp * .2) + ')'; }
+    else ring.style.opacity = 0;
+
+    // cursor
+    var cur = $('#cursor'), clk = $('#click');
+    var pts = PATH.map(function (p) { return { t: p[0], pos: typeof p[1] === 'string' ? center(p[1]) : p[1] }; });
+    var pos = pts[0].pos;
+    for (var i = 0; i < pts.length; i++) {
+      if (t >= pts[i].t) pos = pts[i].pos;
+      if (i < pts.length - 1 && t >= pts[i].t && t < pts[i + 1].t) {
+        var k2 = eio(seg(t, pts[i + 1].t - 1.1, pts[i + 1].t));
+        var A = pts[i].pos, B = pts[i + 1].pos;
+        pos = { x: A.x + (B.x - A.x) * k2, y: A.y + (B.y - A.y) * k2 };
+      }
+    }
+    var cO = Math.min(seg(t, 6.2, 6.8), 1 - seg(t, 72.5, 73.2));
+    cur.style.opacity = cO;
+    var pressed = CLICKS.some(function (c) { return t >= c && t < c + .18; });
+    cur.style.transform = 'translate(' + (pos.x - 6) + 'px,' + (pos.y - 4) + 'px) scale(' + (pressed ? .85 : 1) + ')';
+    var lastClick = CLICKS.filter(function (c) { return c <= t; }).pop();
+    var ck = lastClick != null ? seg(t, lastClick, lastClick + .55) : 1;
+    clk.style.opacity = ck < 1 ? (1 - ck) * .9 * cO : 0;
+    clk.style.transform = 'translate(' + pos.x + 'px,' + pos.y + 'px) scale(' + (.3 + ck * .9) + ')';
+  }
+
+  /* ---------- playback ---------- */
+  function fit() {
+    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    $('#stage').style.transform = 'scale(' + s + ')';
+  }
+  window.seek = function (t) { render(Math.max(0, Math.min(DURATION, t))); };
+  window.FILM_DURATION = DURATION;
+  var capture = /capture/.test(location.search);
+  if (!capture) {
+    fit(); window.addEventListener('resize', fit);
+    var t0 = null;
+    var loop = function (now) {
+      if (t0 === null) t0 = now;
+      render(((now - t0) / 1000) % DURATION);
+      requestAnimationFrame(loop);
+    };
+    document.fonts.ready.then(function () { requestAnimationFrame(loop); });
+  } else {
+    document.fonts.ready.then(function () { render(0); window.FILM_READY = true; });
+  }
+})();
+</script>
+</body>
+</html>

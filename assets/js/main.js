@@ -36,6 +36,7 @@
     mega.hidden = !open;
   }
   megaBtn.addEventListener('click', function (e) { e.stopPropagation(); setMega(mega.hidden); });
+  mega.addEventListener('click', function (e) { if (e.target.closest('a')) setMega(false); });
   document.addEventListener('click', function (e) { if (!mega.hidden && !mega.contains(e.target)) setMega(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { setMega(false); setDrawer(false); } });
 
@@ -100,168 +101,88 @@
     setTimeout(function () { if (!userPickedShift) setMode('ops'); }, 2600);
   }, { threshold: 0.35 });
 
-  /* ---------------- 03 AEP — Outcome Studio ---------------- */
-  // Each outcome maps to a complete application assembled from all eight products.
-  var OUTCOMES = [
-    { key: 'cold', match: /cold|temperat|fridge|freez|vaccine|pharma|food|spoil|reefer/i,
-      title: 'Zero spoiled stock across our cold chain', tag: 'Cold chain', kpi: 'Target: every breach resolved in under 30 min',
-      app: 'FreshTrack', devices: 'Temperature sensors & compressors', protocol: 'MQTT over TLS', assets: 'Cold rooms & reefer trucks', rules: 4, team: 'refrigeration engineers',
-      cards: [['Cold Room 14', '3.6°C', 'Normal'], ['Open tickets', '0', 'All clear']], cta: 'Call engineer' },
-    { key: 'meter', match: /meter|utility|utilities|electric|energy|water|gas|power|grid/i,
-      title: 'Read every meter remotely and cut field visits by 90%', tag: 'Utilities', kpi: 'Target: 99% daily read rate',
-      app: 'MeterOne', devices: 'Smart electricity & water meters', protocol: 'LwM2M + DLMS', assets: 'Feeders, transformers & sites', rules: 5, team: 'field crews',
-      cards: [['Meters reporting', '99.2%', 'Today'], ['Field visits', '−91%', 'This month']], cta: 'Pay bill' },
-    { key: 'fleet', match: /fleet|vehicle|truck|logistic|transport|driver|delivery|car/i,
-      title: 'Know where every vehicle is and stop data-cost overruns', tag: 'Fleet & logistics', kpi: 'Target: 0 SIM bill surprises',
-      app: 'FleetPulse', devices: 'Telematics units & fuel sensors', protocol: 'TCP binary codec', assets: 'Vehicles, trailers & depots', rules: 6, team: 'fleet controllers',
-      cards: [['On the road', '128', 'of 134'], ['Data spend', '₹0.42', 'per vehicle / day']], cta: 'Track vehicle' },
-    { key: 'health', match: /hospital|medical|health|patient|clinic|ventilator|infusion|care/i,
-      title: 'Keep critical medical equipment ready around the clock', tag: 'Healthcare', kpi: 'Target: 99.9% equipment readiness',
-      app: 'CareReady', devices: 'Infusion pumps, monitors & trackers', protocol: 'BLE gateways + HTTPS', assets: 'Wards, beds & equipment', rules: 5, team: 'biomedical engineers',
-      cards: [['Ready now', '412', 'of 418 devices'], ['Service due', '6', 'This week']], cta: 'Locate equipment' },
-    { key: 'factory', match: /machine|factory|manufactur|downtime|plant|motor|pump|oee|industrial/i,
-      title: 'Fix machine faults before they cause downtime', tag: 'Manufacturing', kpi: 'Target: −40% unplanned downtime',
-      app: 'UptimeOS', devices: 'Vibration & current sensors', protocol: 'Modbus + OPC-UA via edge', assets: 'Lines, machines & spares', rules: 5, team: 'maintenance technicians',
-      cards: [['Line 3 health', '94', 'Good'], ['Faults predicted', '7', 'This week']], cta: 'Raise work order' },
-    { key: 'building', match: /building|hvac|lift|elevator|office|facility|mall|hotel|campus/i,
-      title: 'Keep every building system running without manual checks', tag: 'Smart buildings', kpi: 'Target: 98% systems uptime',
-      app: 'BuildingSense', devices: 'HVAC, lift & energy controllers', protocol: 'BACnet + MQTT', assets: 'Floors, plant rooms & lifts', rules: 6, team: 'facility teams',
-      cards: [['Systems online', '98.7%', 'All sites'], ['Energy saved', '18%', 'vs last year']], cta: 'Report an issue' },
-    { key: 'farm', match: /farm|agri|crop|soil|irrigat|field|harvest|livestock/i,
-      title: 'Water every field only when it needs it', tag: 'Agriculture', kpi: 'Target: −30% water use',
-      app: 'AgriFlow', devices: 'Soil probes & pump controllers', protocol: 'LoRaWAN', assets: 'Fields, pumps & tanks', rules: 3, team: 'farm operators',
-      cards: [['Soil moisture', '41%', 'Field B'], ['Water saved', '32%', 'This season']], cta: 'Start pump' }
-  ];
+  /* ---------------- 03 AEP film ---------------- */
+  var film = $('#film'), video = $('#filmVideo');
+  if (film && video) {
+    var CHAPTERS = [[5, 'Build your app'], [27.4, 'Fleet tracking'], [34, 'Cold chain'], [40, 'Smart energy'], [46, 'Smart buildings'], [52, 'Manufacturing'], [58, 'Marketplace'], [68, 'Hundreds more'], [73, 'End to end']];
+    var FILM_END = 85;
+    var chapList = $('#filmChapters'), toggle = $('#filmToggle'), track = $('#filmTrack');
+    var mmss = function (s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); };
+    chapList.innerHTML = CHAPTERS.map(function (c, i) {
+      return '<li><button type="button" data-t="' + c[0] + '"><em>0' + (i + 1) + ' · ' + mmss(c[0]) + '</em><b>' + c[1] + '</b></button></li>';
+    }).join('');
+    var chapBtns = $$('button', chapList);
 
-  // Used when a written outcome doesn't match an industry blueprint.
-  var CUSTOM = {
-    key: 'custom', tag: 'Custom', app: 'MyOutcome', devices: 'Your devices', protocol: 'Auto-detected protocol',
-    assets: 'Your sites & assets', rules: 4, team: 'your field team',
-    cards: [['Outcome progress', '72%', 'On track'], ['Open actions', '3', 'Assigned']], cta: 'View outcome'
-  };
-
-  var MODULE_TEXT = {
-    'device-management': function (o) { return o.devices + ' modelled'; },
-    'sim-management': function () { return 'Pooled data plan with usage caps'; },
-    'device-gateway': function (o) { return o.protocol + ' ingest and decoding'; },
-    'asset-management': function (o) { return o.assets + ' linked'; },
-    'iot-crm': function () { return 'Customers, contracts and SLAs'; },
-    'ticketing': function (o) { return o.rules + ' outcome rules → tickets and alerts'; },
-    'installation-app': function (o) { return 'Install checklist for ' + o.team; },
-    'customer-apps': function (o) { return o.app + ' for iOS, Android and web'; }
-  };
-
-  var studio = $('#studio'), track = $$('#aepTrack li'), outcomeList = $('#outcomeList');
-  var studioRun = 0, studioTimers = [], studioStarted = false;
-
-  outcomeList.innerHTML = OUTCOMES.map(function (o, i) {
-    return '<button type="button" class="outcome" role="radio" aria-checked="false" data-i="' + i + '"><b>' + o.title + '</b><small>' + o.tag + '</small><i></i></button>';
-  }).join('');
-  var outcomeBtns = $$('.outcome', outcomeList);
-
-  $('#studioModules').innerHTML = PRODUCTS.map(function (p) {
-    return '<li class="mod" data-slug="' + p.slug + '"><i></i><div><b>' + p.name + '</b><span>Waiting</span></div><em>' + p.no + '</em></li>';
-  }).join('');
-  var mods = $$('.mod');
-
-  function setStudioStage(n) {
-    studio.dataset.stage = n;
-    track.forEach(function (li, i) {
-      li.classList.toggle('is-done', i < n);
-      li.classList.toggle('is-on', i === n);
-    });
-  }
-  function later(fn, ms) { studioTimers.push(setTimeout(fn, reduceMotion ? Math.min(ms, 60) : ms)); }
-
-  function phoneBody(o) {
-    return o.cards.map(function (c) {
-      return '<div class="scard"><span>' + c[0] + '</span><b>' + c[1] + '</b><em>' + c[2] + '</em></div>';
-    }).join('') +
-      '<div class="sbars"><span style="--h:40%"></span><span style="--h:58%"></span><span style="--h:36%"></span><span style="--h:72%"></span><span style="--h:60%"></span><span style="--h:84%"></span><span style="--h:66%"></span></div>' +
-      '<div class="sbtn">' + o.cta + '</div>';
-  }
-
-  function runOutcome(o, text) {
-    studioTimers.forEach(clearTimeout); studioTimers = [];
-    var run = ++studioRun;
-    studioStarted = true;
-    $('#studioOutcome').textContent = text || o.title;
-    $('#studioKpi').textContent = !text ? o.kpi
-      : o === CUSTOM ? 'Custom blueprint generated' : 'Matched to the ' + o.tag.toLowerCase() + ' blueprint';
-    $('#sphoneName').textContent = o.app;
-    $('#sphoneBody').innerHTML = phoneBody(o);
-    $('#studioUrl').textContent = 'Live at ' + o.app.toLowerCase() + '.app';
-    $('#studioBar').style.setProperty('--p', 0);
-    mods.forEach(function (m) { m.className = 'mod'; $('span', m).textContent = 'Waiting'; });
-    setStudioStage(0);
-    $('#studioStatus').textContent = 'Outcome received';
-
-    later(function () {
-      if (run !== studioRun) return;
-      setStudioStage(1);
-      mods.forEach(function (m, i) {
-        later(function () {
-          if (run !== studioRun) return;
-          m.classList.add('is-building');
-          $('span', m).textContent = 'Configuring…';
-          $('#studioStatus').textContent = 'Building · ' + (i + 1) + ' / 8';
-          later(function () {
-            if (run !== studioRun) return;
-            m.classList.remove('is-building'); m.classList.add('is-done');
-            $('span', m).textContent = MODULE_TEXT[m.dataset.slug](o);
-            $('#studioBar').style.setProperty('--p', (i + 1) / 8);
-          }, 320);
-        }, i * 360);
+    var play = function () { var p = video.play(); if (p && p.catch) p.catch(function () {}); };
+    var sync = function () {
+      var t = video.currentTime, d = video.duration || FILM_END;
+      $('#filmFill').style.setProperty('--p', t / d);
+      track.setAttribute('aria-valuenow', Math.round(t));
+      $('#filmTime').textContent = mmss(t) + ' / ' + mmss(d);
+      chapBtns.forEach(function (b, i) {
+        var a = CHAPTERS[i][0], z = i < CHAPTERS.length - 1 ? CHAPTERS[i + 1][0] : d;
+        b.setAttribute('aria-current', String(t >= a && t < z));
+        b.style.setProperty('--c', Math.max(0, Math.min(1, (t - a) / (z - a))));
       });
-      later(function () {
-        if (run !== studioRun) return;
-        setStudioStage(2);
-        $('#studioStatus').textContent = 'Customise your app';
-        later(function () { if (run === studioRun) pickSwatch(Math.max(0, OUTCOMES.indexOf(o)) % 5); }, 700);
-        later(function () {
-          if (run !== studioRun) return;
-          setStudioStage(3);
-          $('#studioStatus').textContent = 'Live';
-        }, 2400);
-      }, 8 * 360 + 500);
-    }, 600);
+    };
+    var state = function () {
+      var playing = !video.paused && !video.ended;
+      film.classList.toggle('is-playing', playing);
+      toggle.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+      toggle.firstElementChild.className = 'film__ic film__ic--' + (playing ? 'pause' : 'play');
+    };
+    video.addEventListener('timeupdate', sync);
+    video.addEventListener('loadedmetadata', sync);
+    video.addEventListener('play', function () { film.classList.add('has-played'); state(); });
+    video.addEventListener('pause', state);
+    video.addEventListener('ended', state);
+    var flip = function () { video.paused || video.ended ? play() : video.pause(); };
+    // Browsers only autoplay muted video, so sound comes on with the visitor's own click.
+    var sound = $('#filmSound');
+    var setSound = function (on) {
+      video.muted = !on;
+      sound.setAttribute('aria-pressed', String(on));
+      sound.setAttribute('aria-label', on ? 'Mute' : 'Turn sound on');
+      sound.firstElementChild.className = 'film__ic film__ic--' + (on ? 'sound' : 'muted');
+      film.classList.toggle('has-sound', on);
+    };
+    sound.addEventListener('click', function () { setSound(video.muted); });
+    $('#filmBig').addEventListener('click', function () {
+      setSound(true);
+      if (!film.classList.contains('has-played') || video.ended) video.currentTime = 0;
+      play();
+    });
+    toggle.addEventListener('click', flip);
+    video.addEventListener('click', flip);
+    chapList.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-t]');
+      if (!b) return;
+      video.currentTime = +b.dataset.t; play();
+    });
+    var seekTo = function (x) {
+      var r = track.getBoundingClientRect();
+      video.currentTime = Math.max(0, Math.min(1, (x - r.left) / r.width)) * (video.duration || FILM_END);
+      sync();
+    };
+    track.addEventListener('click', function (e) { seekTo(e.clientX); });
+    track.addEventListener('keydown', function (e) {
+      var d = e.key === 'ArrowRight' ? 5 : e.key === 'ArrowLeft' ? -5 : 0;
+      if (d) { e.preventDefault(); video.currentTime = Math.max(0, video.currentTime + d); sync(); }
+    });
+    $('#filmFull').addEventListener('click', function () {
+      var el = $('.film__frame');
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (el.requestFullscreen) el.requestFullscreen();
+      else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+    });
+    // Starts silently the first time it scrolls into view; pauses when it leaves.
+    var autoplayed = false;
+    onView(film, function (vis) {
+      if (vis && !autoplayed && !reduceMotion) { autoplayed = true; play(); }
+      else if (!vis && !video.paused) video.pause();
+    }, { threshold: 0.55 });
+    sync();
   }
-
-  var swatchBtns = $$('#swatches button');
-  function pickSwatch(i) {
-    swatchBtns.forEach(function (b, j) { b.setAttribute('aria-checked', String(j === i)); });
-    studio.style.setProperty('--brand', swatchBtns[i].style.getPropertyValue('--s'));
-  }
-  swatchBtns.forEach(function (b, i) { b.addEventListener('click', function () { pickSwatch(i); }); });
-
-  function selectOutcome(i, text) {
-    outcomeBtns.forEach(function (b, j) { b.setAttribute('aria-checked', String(j === i && !text)); });
-    runOutcome(i < 0 ? CUSTOM : OUTCOMES[i], text);
-  }
-  outcomeBtns.forEach(function (b, i) { b.addEventListener('click', function () { selectOutcome(i); }); });
-  outcomeList.addEventListener('keydown', function (e) {
-    var cur = outcomeBtns.indexOf(document.activeElement);
-    if (cur < 0) return;
-    var next = e.key === 'ArrowDown' ? cur + 1 : e.key === 'ArrowUp' ? cur - 1 : null;
-    if (next === null) return;
-    e.preventDefault();
-    outcomeBtns[(next + outcomeBtns.length) % outcomeBtns.length].focus();
-  });
-
-  $('#outcomeForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var input = $('#outcomeInput'), text = input.value.trim();
-    if (!text) { input.focus(); return; }
-    var idx = OUTCOMES.findIndex(function (o) { return o.match.test(text); });
-    selectOutcome(idx, text.charAt(0).toUpperCase() + text.slice(1));
-  });
-
-  // Play the first outcome once, when the studio first scrolls into view.
-  setStudioStage(0);
-  $('#sphoneBody').innerHTML = phoneBody(OUTCOMES[0]);
-  onView(studio, function (vis) {
-    if (vis && !studioStarted) selectOutcome(0);
-  }, { threshold: 0.35 });
 
   /* ---------------- 04 Product suite ---------------- */
   var list = $('#suiteList'), stage = $('#suiteStage');
@@ -668,6 +589,60 @@
     if (e.key === 'ArrowRight') { rail.scrollBy({ left: 360, behavior: 'smooth' }); e.preventDefault(); }
     if (e.key === 'ArrowLeft') { rail.scrollBy({ left: -360, behavior: 'smooth' }); e.preventDefault(); }
   });
+
+  /* ---------------- Marketplace spotlight: pick a category, then a product ---------------- */
+  var MARKET = window.HASH8_MARKET || [];
+  var TYPES = window.HASH8_TYPES || {};
+  var show = $('#show');
+  if (show && MARKET.length) {
+    var CATS = [['device', 'Devices'], ['app', 'Apps & templates'], ['integration', 'Integrations'], ['connectivity', 'Connectivity'], ['service', 'Services']];
+    var showCat = 'device', showId = null;
+    var renderShow = function (animate) {
+      var items = MARKET.filter(function (m) { return m.type === showCat; });
+      var m = items.filter(function (x) { return x.id === showId; })[0] || items[0];
+      showId = m.id;
+      show.innerHTML =
+        '<div class="show__tabs" role="tablist" aria-label="Marketplace categories">' + CATS.map(function (c) {
+          var n = MARKET.filter(function (x) { return x.type === c[0]; }).length;
+          return '<button type="button" role="tab" data-cat="' + c[0] + '" aria-selected="' + (c[0] === showCat) + '" tabindex="' + (c[0] === showCat ? 0 : -1) + '">' + c[1] + '<em>' + n + '</em></button>';
+        }).join('') + '</div>' +
+        '<div class="show__stage" role="tabpanel">' +
+          '<div class="show__feature">' +
+            '<div class="show__art" style="--hue:' + m.hue + '">' + window.HASH8_ART(m.kind) + '</div>' +
+            '<div class="show__info">' +
+              '<span class="mk__type">' + TYPES[m.type] + ' · ' + m.industry + (m.certified ? '<span class="mk__ok">#8 Certified</span>' : '') + '</span>' +
+              '<h3>' + m.name + '</h3>' +
+              '<p class="show__by">by <b>' + m.vendor + '</b> · <span class="mk__rate"><i aria-hidden="true">★</i> ' + m.rating.toFixed(1) + ' <small>(' + m.reviews + ')</small></span></p>' +
+              '<p class="show__blurb">' + m.blurb + '</p>' +
+              '<div class="show__tags">' + m.tags.map(function (t) { return '<span>' + t + '</span>'; }).join('') + '</div>' +
+              '<div class="show__buy"><div class="show__price"><b>' + m.priceLabel + '</b><small>' + m.unit + '</small></div>' +
+                '<a class="btn btn--light btn--sm" href="marketplace.html#item-' + m.id + '">View in Marketplace</a></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="show__list"><p>More ' + CATS.filter(function (c) { return c[0] === showCat; })[0][1].toLowerCase() + '</p>' + items.map(function (x) {
+            return '<button type="button" class="show__item" data-id="' + x.id + '" aria-current="' + (x.id === m.id) + '">' +
+              '<span class="show__thumb" style="--hue:' + x.hue + '">' + window.HASH8_ART(x.kind) + '</span>' +
+              '<span><b>' + x.name + '</b><small>' + x.vendor + '</small></span><em>' + x.priceLabel + '</em></button>';
+          }).join('') + '</div>' +
+        '</div>';
+      if (animate) { show.classList.remove('is-swapping'); void show.offsetWidth; show.classList.add('is-swapping'); }
+    };
+    show.addEventListener('click', function (e) {
+      var c = e.target.closest('[data-cat]'), it = e.target.closest('[data-id]');
+      if (c) { showCat = c.dataset.cat; showId = null; renderShow(true); show.querySelector('[aria-selected="true"]').focus(); }
+      else if (it) { showId = it.dataset.id; renderShow(true); show.querySelector('[data-id="' + showId + '"]').focus(); }
+    });
+    show.addEventListener('keydown', function (e) {
+      if (!e.target.closest('[data-cat]')) return;
+      var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!d) return;
+      var i = CATS.findIndex(function (c) { return c[0] === showCat; });
+      showCat = CATS[(i + d + CATS.length) % CATS.length][0]; showId = null;
+      renderShow(true);
+      show.querySelector('[aria-selected="true"]').focus();
+    });
+    renderShow(false);
+  }
 
   /* ---------------- 09 Lead form ---------------- */
   $('#leadForm').addEventListener('submit', function (e) {

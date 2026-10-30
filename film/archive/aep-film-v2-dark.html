@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>#8 AEP film</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Source for the #8 AEP marketing film. Every frame is a pure function of time:
+   seek(t) renders the frame at t seconds, so film/render.js can export it frame by frame. */
+:root { --ob: #05060A; --po: #F4F2EE; --gr: #8A8F9C; --sig: #5B7CFF; --ion: #5EE6C8; --emb: #FF8A4C; --line: rgba(255,255,255,.08); --font: 'Inter Tight', system-ui, sans-serif; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+body { font-family: var(--font); color: var(--po); -webkit-font-smoothing: antialiased; display: grid; place-items: center; }
+#stage { position: relative; width: 1920px; height: 1080px; flex: none; overflow: hidden;
+  background: radial-gradient(1200px 700px at 78% 25%, #0F1636 0%, transparent 60%), radial-gradient(900px 600px at 8% 95%, rgba(94,230,200,.08), transparent 60%), var(--ob); }
+.scene { position: absolute; inset: 0; visibility: hidden; }
+.grad { background: linear-gradient(100deg, #5B7CFF, #5EE6C8 50%, #FF8A4C); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.logo { fill: var(--po); color: var(--po); }
+.center { display: grid; place-items: center; align-content: center; text-align: center; gap: 26px; }
+.big { font-size: 128px; line-height: .95; letter-spacing: -0.058em; font-weight: 700; }
+.lede { font-size: 32px; color: var(--gr); }
+
+/* Captions */
+.cap { position: absolute; left: 160px; top: 62px; width: 1600px; display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; }
+.cap span { display: block; font-size: 22px; font-weight: 600; color: var(--ion); margin-bottom: 10px; }
+.cap h2 { font-size: 66px; line-height: 1; letter-spacing: -0.045em; font-weight: 700; white-space: nowrap; }
+.cap p { font-size: 26px; color: var(--gr); max-width: 700px; text-align: right; line-height: 1.35; }
+
+/* Dashboard chrome */
+.dash { position: absolute; left: 160px; top: 232px; width: 1600px; height: 800px; border-radius: 30px; overflow: hidden; display: grid; grid-template-columns: 84px 1fr;
+  background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.012)), #090B12;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 80px 160px -60px rgba(0,0,0,.95), 0 0 140px -50px var(--c); }
+.nav { border-right: 1px solid var(--line); display: grid; align-content: start; justify-items: center; gap: 18px; padding-top: 24px; }
+.nav b { width: 44px; height: 44px; border-radius: 14px; background: var(--c); display: grid; place-items: center; font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 14px; }
+.nav i { width: 26px; height: 26px; border-radius: 8px; background: rgba(255,255,255,.1); }
+.nav i.on { background: var(--c); opacity: .85; }
+.dm { display: grid; grid-template-rows: 70px 124px 1fr; min-width: 0; }
+.top { display: flex; align-items: center; gap: 16px; padding: 0 28px; border-bottom: 1px solid var(--line); }
+.top b { font-size: 24px; letter-spacing: -0.02em; }
+.top .live { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: var(--ion); padding: 6px 12px; border-radius: 999px; background: rgba(94,230,200,.1); }
+.top .live i { width: 9px; height: 9px; border-radius: 50%; background: var(--ion); box-shadow: 0 0 12px var(--ion); }
+.top small { margin-left: auto; font-size: 16px; color: var(--gr); }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 18px 28px 0; }
+.kpi { padding: 16px 20px; border-radius: 18px; background: rgba(255,255,255,.035); box-shadow: inset 0 0 0 1px var(--line); }
+.kpi span { font-size: 15px; color: var(--gr); }
+.kpi b { display: block; font-size: 40px; font-weight: 700; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; margin-top: 4px; line-height: 1.05; }
+.kpi b em { font-style: normal; font-size: 18px; color: var(--gr); margin-left: 4px; font-weight: 500; letter-spacing: 0; }
+.body { padding: 18px 28px 28px; display: grid; gap: 16px; min-height: 0; position: relative; }
+.card { border-radius: 20px; background: rgba(255,255,255,.03); box-shadow: inset 0 0 0 1px var(--line); padding: 18px 20px; position: relative; overflow: hidden; min-height: 0; }
+.card h4 { font-size: 16px; color: var(--gr); font-weight: 600; margin-bottom: 10px; }
+.toast { position: absolute; display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-radius: 16px; font-size: 18px; font-weight: 600; visibility: hidden;
+  background: rgba(14,16,24,.94); box-shadow: inset 0 0 0 1px rgba(255,138,76,.5), 0 20px 50px -10px rgba(0,0,0,.8); }
+.toast i { width: 12px; height: 12px; border-radius: 50%; background: var(--emb); box-shadow: 0 0 14px var(--emb); flex: none; }
+.toast.ok { box-shadow: inset 0 0 0 1px rgba(94,230,200,.5), 0 20px 50px -10px rgba(0,0,0,.8); }
+.toast.ok i { background: var(--ion); box-shadow: 0 0 14px var(--ion); }
+.row { display: grid; grid-template-columns: 1fr auto auto; gap: 14px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--line); font-size: 17px; }
+.row:last-child { border-bottom: 0; }
+.pill { font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: rgba(94,230,200,.12); color: var(--ion); }
+.pill.warn { background: rgba(255,138,76,.15); color: var(--emb); }
+.pill.idle { background: rgba(255,255,255,.08); color: var(--gr); }
+.num { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 90px; text-align: right; }
+
+/* How it works */
+.steps3 { position: absolute; left: 160px; right: 160px; top: 380px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.s3 { padding: 40px; border-radius: 30px; background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015)), #0A0C14; box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); display: grid; gap: 18px; visibility: hidden; }
+.s3 .n { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-size: 26px; font-weight: 700; background: rgba(255,255,255,.08); }
+.s3.on .n { background: var(--sig); box-shadow: 0 0 0 8px rgba(91,124,255,.2), 0 0 60px -6px var(--sig); }
+.s3 h3 { font-size: 42px; letter-spacing: -0.035em; font-weight: 700; line-height: 1.05; }
+.s3 p { font-size: 22px; color: var(--gr); line-height: 1.4; }
+.s3 .ic { height: 120px; display: grid; place-items: center; border-radius: 20px; background: rgba(255,255,255,.03); }
+.s3 .ic svg { width: 90px; height: 90px; }
+.wire { position: absolute; left: 160px; right: 160px; top: 346px; height: 2px; background: rgba(255,255,255,.1); }
+.wire i { position: absolute; top: -5px; width: 12px; height: 12px; border-radius: 50%; background: var(--ion); box-shadow: 0 0 20px var(--ion); }
+
+/* Many use cases */
+.wall { position: absolute; left: 160px; right: 160px; top: 270px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.uc { display: grid; grid-template-columns: 64px 1fr; gap: 18px; align-items: center; padding: 30px 26px; border-radius: 24px; visibility: hidden; background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015)), #0A0C14; box-shadow: inset 0 0 0 1px rgba(255,255,255,.09); }
+.uc span { width: 64px; height: 64px; border-radius: 18px; display: grid; place-items: center; background: color-mix(in srgb, var(--h) 22%, transparent); color: var(--h); }
+.uc span svg { width: 32px; height: 32px; }
+.uc b { font-size: 24px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.15; }
+.uc small { display: block; font-size: 16px; color: var(--gr); margin-top: 4px; font-weight: 500; }
+
+/* End to end */
+.pipe { position: absolute; left: 160px; right: 160px; top: 430px; height: 180px; display: flex; justify-content: space-between; }
+.pipe .line { position: absolute; left: 60px; right: 60px; top: 60px; height: 3px; background: linear-gradient(90deg, #5B7CFF, #5EE6C8 50%, #FF8A4C); opacity: .35; }
+.pn { position: relative; width: 120px; display: grid; justify-items: center; align-content: start; gap: 16px; text-align: center; visibility: hidden; }
+.pn i { width: 120px; height: 120px; border-radius: 34px; display: grid; place-items: center; background: #0D1020; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.14); }
+.pn i svg { width: 52px; height: 52px; }
+.pn b { font-size: 22px; font-weight: 650; white-space: nowrap; }
+.pn.on i { box-shadow: inset 0 0 0 2px var(--ion), 0 0 60px -10px var(--ion); background: #0F1A24; }
+.pulse { position: absolute; top: 54px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 0 24px #fff, 0 0 50px var(--ion); }
+.prods { position: absolute; left: 160px; right: 160px; top: 720px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.prods span { font-size: 20px; padding: 12px 22px; border-radius: 999px; background: rgba(255,255,255,.05); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); visibility: hidden; }
+
+.cta { display: inline-flex; align-items: center; height: 88px; padding: 0 48px; border-radius: 999px; background: var(--sig); color: #fff; font-size: 32px; font-weight: 650; box-shadow: 0 24px 80px -16px rgba(91,124,255,.8); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 96 82">
+    <polygon points="31,18 41,18 25,80 15,80"/><polygon points="53,18 63,18 47,80 37,80"/>
+    <polygon points="10,32 72,32 69.5,42 7.5,42"/><polygon points="4,56 66,56 63.5,66 1.5,66"/>
+    <g fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="84" cy="7.6" rx="5.6" ry="5.2"/><ellipse cx="84" cy="19.6" rx="6.8" ry="6.6"/></g>
+  </symbol>
+</svg>
+<div id="stage"></div>
+
+<script>
+(function () {
+  'use strict';
+  var DURATION = 70;
+  var stage = document.getElementById('stage');
+  var $ = function (s) { return stage.querySelector(s); };
+  var $$ = function (s) { return Array.prototype.slice.call(stage.querySelectorAll(s)); };
+  function clamp(x) { return Math.max(0, Math.min(1, x)); }
+  function seg(t, a, b) { return clamp((t - a) / (b - a)); }
+  function eo(x) { return 1 - Math.pow(1 - x, 3); }
+  function fmt(n, dp) { return Number(n).toLocaleString('en-IN', { minimumFractionDigits: dp || 0, maximumFractionDigits: dp || 0 }); }
+  function svg(d, sw) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (sw || 1.7) + '" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>'; }
+
+  var G = {
+    outcome: '<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',
+    device: '<rect x="6" y="3" width="12" height="18" rx="3"/><path d="M10 7h4"/><circle cx="12" cy="15" r="2"/>',
+    launch: '<path d="M5 19c2-6 6-12 14-14-2 8-8 12-14 14z"/><path d="M9 15l-3-3"/>',
+    heart: '<path d="M2 12h4l2-5 4 10 2-5h8"/>',
+    lamp: '<path d="M12 22V9M8 5h8l-2 4h-4z"/><path d="M9 22h6"/>',
+    tank: '<rect x="5" y="4" width="14" height="17" rx="3"/><path d="M5 13h14"/>',
+    ev: '<rect x="5" y="3" width="10" height="18" rx="2"/><path d="M15 9h2a2 2 0 0 1 2 2v5M10 8l-2 4h4l-2 4"/>',
+    cart: '<path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',
+    park: '<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>',
+    pill: '<rect x="3" y="8" width="18" height="8" rx="4"/><path d="M12 8v8"/>',
+    train: '<rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M8 21l2-4M16 21l-2-4"/>',
+    oil: '<path d="M12 3l4 7a4 4 0 1 1-8 0z"/><path d="M4 21h16"/>',
+    hotel: '<path d="M3 20V8M3 14h18v6M21 14v-3a3 3 0 0 0-3-3h-7v6"/>',
+    home: '<path d="M3 11l9-7 9 7v9H3z"/><path d="M10 20v-6h4v6"/>',
+    chip: '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
+    rules: '<path d="M4 6h10M4 12h16M4 18h7"/><circle cx="17" cy="6" r="2"/><circle cx="14" cy="18" r="2"/>',
+    ticket: '<path d="M3 8a2 2 0 0 0 0 4v4h18v-4a2 2 0 0 1 0-4V4H3z"/>',
+    users: '<circle cx="9" cy="8" r="3.5"/><path d="M2 20c1-4 4-6 7-6s6 2 7 6"/><circle cx="17" cy="9" r="2.5"/>',
+    phone: '<rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/>'
+  };
+
+  /* ---------------- Scene list ---------------- */
+  var SC = [
+    { id: 'hook', a: 0, b: 5.4 }, { id: 'how', a: 5, b: 15.4 },
+    { id: 'fleet', a: 15, b: 21.6 }, { id: 'cold', a: 21.2, b: 27.6 }, { id: 'energy', a: 27.2, b: 33.6 },
+    { id: 'bldg', a: 33.2, b: 39.6 }, { id: 'agri', a: 39.2, b: 45.6 }, { id: 'mfg', a: 45.2, b: 51.6 },
+    { id: 'many', a: 51.2, b: 56.6 }, { id: 'e2e', a: 56.2, b: 63.6 }, { id: 'outro', a: 63.2, b: 70.1 }
+  ];
+
+  function cap(kicker, title, sub) { return '<div class="cap"><div><span>' + kicker + '</span><h2>' + title + '</h2></div><p>' + sub + '</p></div>'; }
+  function dash(app, color, who, kpis, body, cols) {
+    return '<div class="dash" style="--c:' + color + '"><aside class="nav"><b>' + app.charAt(0) + '</b><i class="on"></i><i></i><i></i><i></i><i></i></aside>' +
+      '<div class="dm"><header class="top"><b>' + app + '</b><span class="live"><i></i>Live</span><small>' + who + '</small></header>' +
+      '<div class="kpis">' + kpis.map(function (k) {
+        return '<div class="kpi"><span>' + k[0] + '</span><b data-v="' + k[1] + '" data-dp="' + (k[3] || 0) + '" data-u="' + (k[2] || '') + '"></b></div>';
+      }).join('') + '</div><div class="body" style="grid-template-columns:' + (cols || '1fr') + '">' + body + '</div></div></div>';
+  }
+
+  /* hook */
+  var html = '<div class="scene center" id="hook"><svg class="logo" style="width:150px;height:128px"><use href="#logo"/></svg>' +
+    '<h1 class="big">One platform.<br><span class="grad">Every IoT application.</span></h1><p class="lede">The #8 Application Enablement Platform</p></div>';
+
+  /* how it works */
+  html += '<div class="scene" id="how">' + cap('How it works', 'Three steps. No code.', 'From the outcome you want to a live application your teams and customers use.') +
+    '<div class="wire"><i id="wireDot"></i></div><div class="steps3">' +
+    [['outcome', 'Choose an outcome', 'Zero spoiled stock, live fleet tracking, remote meter reading. Pick it, or describe your own.'],
+     ['device', 'Connect your devices', 'Bring your own or buy certified ones. They onboard themselves.'],
+     ['launch', 'Launch your app', 'Dashboards, workflows and a branded app, live on your own domain.']].map(function (s, i) {
+      return '<div class="s3" id="s3' + i + '"><span class="n">' + (i + 1) + '</span><div class="ic" style="color:' + ['#5B7CFF', '#5EE6C8', '#FF8A4C'][i] + '">' + svg(G[s[0]], 1.4) + '</div><h3>' + s[1] + '</h3><p>' + s[2] + '</p></div>';
+    }).join('') + '</div></div>';
+
+  /* fleet */
+  var ROUTES = ['M 40 120 H 420 V 300 H 860', 'M 860 60 V 200 H 560 V 440', 'M 180 380 C 300 380 320 220 480 200 S 760 120 860 330', 'M 40 440 H 300 V 60 H 700', 'M 600 40 V 260 H 120 V 120'];
+  var VEH = [['TN-01-2290', '#5B7CFF', .1, .055], ['TN-07-1184', '#5EE6C8', .5, .05], ['TN-09-4471', '#FF8A4C', 0, .07], ['TN-22-0937', '#C77DFF', .3, .045], ['TN-11-5521', '#F2C14E', .7, .06]];
+  var blocks = '';
+  for (var bx = 0; bx < 9; bx++) for (var by = 0; by < 5; by++) blocks += '<rect x="' + (bx * 100 + 14) + '" y="' + (by * 96 + 14) + '" width="72" height="68" rx="8" fill="rgba(255,255,255,.025)"/>';
+  var map = '<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block">' +
+    '<rect width="900" height="480" fill="#0A0E19"/>' + blocks +
+    '<path d="M640 300 C700 280 780 300 900 360 V480 H600 C610 420 600 340 640 300z" fill="rgba(91,124,255,.12)"/>' +
+    ROUTES.map(function (d, i) { return '<path id="rt' + i + '" d="' + d + '" fill="none" stroke="#1A2133" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>'; }).join('') +
+    '<path id="rtHi" d="' + ROUTES[2] + '" fill="none" stroke="#FF8A4C" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 8" opacity=".7"/>' +
+    '<circle cx="180" cy="380" r="64" fill="rgba(255,138,76,.06)" stroke="#FF8A4C" stroke-width="2" stroke-dasharray="6 6"/>' +
+    '<text x="180" y="304" fill="#FF8A4C" font-size="15" font-weight="600" text-anchor="middle" font-family="Inter Tight">Depot zone</text>' +
+    VEH.map(function (v, i) { return '<g id="vh' + i + '"><circle r="18" fill="' + v[1] + '" opacity=".22"/><circle r="8" fill="' + v[1] + '" stroke="#fff" stroke-width="2"/><text x="14" y="-12" fill="#fff" font-size="13" font-weight="600" font-family="Inter Tight">' + v[0].slice(-4) + '</text></g>'; }).join('') +
+    '</svg>';
+  html += '<div class="scene" id="fleet">' + cap('Use case 01 · Fleet & logistics', 'Live fleet tracking', 'Every vehicle, trip and SIM on one live map, with alerts the moment something changes.') +
+    dash('FleetPulse', '#FF8A4C', 'Fleet operations · Chennai', [['Vehicles online', 148, '/ 152'], ['On-time deliveries', 97.4, '%', 1], ['Average speed', 46, 'km/h'], ['Data cost per vehicle', 0.42, '₹/day', 2]],
+      '<div class="card" style="padding:0">' + map + '<div class="toast" id="fleetToast" style="left:24px;bottom:24px"><i></i>TN-09-4471 left the depot zone · security alerted</div></div>' +
+      '<div class="card"><h4>Vehicles</h4>' + VEH.map(function (v, i) { return '<div class="row"><span><b style="color:' + v[1] + '">●</b> ' + v[0] + '</span><span class="pill" id="vs' + i + '">Moving</span><span class="num" id="vk' + i + '"></span></div>'; }).join('') + '</div>',
+      '1fr 380px') + '</div>';
+
+  /* cold chain */
+  html += '<div class="scene" id="cold">' + cap('Use case 02 · Cold chain', 'Nothing spoils on your watch', 'Every room monitored. Breaches become tickets, dispatches and fixes, automatically.') +
+    dash('FreshTrack', '#5EE6C8', 'Cold chain · 12 sites', [['Cold rooms', 120], ['Within range', 119, '/ 120'], ['Tickets today', 1], ['Stock saved this month', 14.2, '₹ lakh', 1]],
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-content:start">' + [0, 1, 2, 3, 4, 5, 6, 7].map(function (i) {
+        return '<div class="card" id="cr' + i + '" style="padding:16px"><h4 style="margin:0 0 6px">Room ' + (11 + i) + '</h4><b id="ct' + i + '" style="font-size:36px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums"></b><small id="cs' + i + '" style="display:block;font-size:14px;color:#5EE6C8;margin-top:4px">Normal</small></div>';
+      }).join('') + '</div>' +
+      '<div class="card"><h4>Room 14 · temperature, live</h4><svg viewBox="0 0 520 300" style="width:100%;height:330px"><line x1="0" y1="150" x2="520" y2="150" stroke="#FF8A4C" stroke-dasharray="6 6" opacity=".7"/><text x="512" y="140" fill="#FF8A4C" font-size="14" text-anchor="end" font-family="Inter Tight">Limit 4°C</text><polyline id="coldLine" fill="none" stroke="#5EE6C8" stroke-width="3" stroke-linejoin="round"/></svg>' +
+      '<div class="toast" id="coldToast" style="left:20px;right:20px;bottom:20px"><i></i><span id="coldToastTxt"></span></div></div>',
+      '1.15fr 1fr') + '</div>';
+
+  /* energy */
+  html += '<div class="scene" id="energy">' + cap('Use case 03 · Utilities', 'Every meter, read remotely', 'Live load, billing-ready reads and outages caught before the call centre rings.') +
+    dash('MeterOne', '#5B7CFF', 'Smart energy · 48,210 meters', [['Meters online', 48210], ['Daily read rate', 99.2, '%', 1], ['Field visits', -91, '%'], ['Outages caught early', 37]],
+      '<div class="card"><h4>Network load · last 24 hours</h4><svg viewBox="0 0 800 330" style="width:100%;height:400px"><defs><linearGradient id="eg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#5B7CFF" stop-opacity=".55"/><stop offset="1" stop-color="#5B7CFF" stop-opacity="0"/></linearGradient><clipPath id="ec"><rect id="eclip" x="0" y="0" width="0" height="330"/></clipPath></defs>' +
+        [60, 140, 220, 300].map(function (y) { return '<line x1="0" x2="800" y1="' + y + '" y2="' + y + '" stroke="rgba(255,255,255,.06)"/>'; }).join('') +
+        '<g clip-path="url(#ec)"><path id="earea" fill="url(#eg)"/><path id="eline" fill="none" stroke="#7B95FF" stroke-width="3"/></g></svg></div>' +
+      '<div style="display:grid;gap:16px"><div class="card"><h4>Load by zone</h4><div style="display:flex;align-items:end;gap:14px;height:170px">' +
+        ['North', 'South', 'East', 'West', 'Central'].map(function (z, i) { return '<div style="flex:1;display:grid;gap:8px;justify-items:center;height:100%;align-content:end"><span id="ez' + i + '" style="width:100%;border-radius:8px;background:linear-gradient(#5B7CFF,rgba(91,124,255,.25))"></span><small style="font-size:13px;color:#8A8F9C">' + z + '</small></div>'; }).join('') +
+      '</div></div><div class="card" style="display:flex;align-items:center;gap:22px"><svg viewBox="0 0 120 120" style="width:130px;height:130px"><circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="14"/><circle id="edon" cx="60" cy="60" r="48" fill="none" stroke="#5EE6C8" stroke-width="14" stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="301.6" stroke-dashoffset="301.6"/></svg><div><h4 style="margin:0">Bills generated today</h4><b id="ebills" style="font-size:40px;font-weight:700;letter-spacing:-.03em"></b></div></div></div>',
+      '1.5fr 1fr') + '</div>';
+
+  /* buildings */
+  var ROOMS = [[20, 20, 200, 140, 'Lobby'], [230, 20, 160, 140, '4A'], [400, 20, 160, 140, '4B'], [570, 20, 200, 140, 'Cafe'], [20, 170, 160, 160, 'Lab'], [190, 170, 280, 160, 'Open office'], [480, 170, 140, 160, 'Board'], [630, 170, 140, 160, 'Gym'], [20, 340, 300, 120, 'Studio'], [330, 340, 440, 120, 'Workspace']];
+  html += '<div class="scene" id="bldg">' + cap('Use case 04 · Smart buildings', 'Buildings that run themselves', 'Comfort, occupancy and energy in real time. HVAC adjusts before anyone feels it.') +
+    dash('BuildingSense', '#C77DFF', 'Tower 2 · Floor 4', [['Occupancy now', 312, 'people'], ['Comfort score', 94, '/ 100'], ['Energy saved', 18, '%'], ['Open work orders', 2]],
+      '<div class="card"><h4>Floor 4 · CO₂ and occupancy, live</h4><svg viewBox="0 0 790 470" style="width:100%;height:420px">' +
+        ROOMS.map(function (r, i) { return '<rect id="rm' + i + '" x="' + r[0] + '" y="' + r[1] + '" width="' + r[2] + '" height="' + r[3] + '" rx="12" stroke="rgba(255,255,255,.14)"/><text x="' + (r[0] + 16) + '" y="' + (r[1] + 30) + '" fill="#fff" font-size="17" font-weight="600" font-family="Inter Tight">' + r[4] + '</text><text id="rmv' + i + '" x="' + (r[0] + 16) + '" y="' + (r[1] + 56) + '" fill="rgba(255,255,255,.7)" font-size="15" font-family="Inter Tight"></text>'; }).join('') +
+      '</svg><div class="toast ok" id="bToast" style="right:20px;bottom:20px"><i></i>Room 4B · ventilation boosted automatically</div></div>' +
+      '<div class="card"><h4>Systems</h4>' + [['HVAC · Zone A', 'Auto'], ['HVAC · Zone B', 'Boost'], ['Lifts 1–4', 'Running'], ['Lighting', '62% on'], ['Water pumps', 'Running']].map(function (s, i) {
+        return '<div class="row"><span>' + s[0] + '</span><span class="pill' + (i === 1 ? ' warn' : '') + '">' + s[1] + '</span><span class="num" id="bk' + i + '"></span></div>'; }).join('') + '</div>',
+      '1.6fr 1fr') + '</div>';
+
+  /* agriculture */
+  html += '<div class="scene" id="agri">' + cap('Use case 05 · Agriculture', 'Fields that water themselves', 'Soil sensors decide. Pumps start only where crops need it.') +
+    dash('AgriFlow', '#7BD88F', 'Green Valley Farms · 48 acres', [['Fields monitored', 12], ['Average moisture', 38, '%'], ['Water saved', 32, '%'], ['Pumps running', 3, '/ 8']],
+      '<div class="card"><h4>Fields · soil moisture, live</h4><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">' +
+        'ABCDEFGHIJKL'.split('').map(function (f, i) { return '<div id="fd' + i + '" style="height:126px;border-radius:14px;padding:14px;display:grid;align-content:space-between"><b style="font-size:18px">Field ' + f + '</b><span style="display:flex;justify-content:space-between;align-items:end"><small id="fv' + i + '" style="font-size:24px;font-weight:700"></small><em id="fp' + i + '" style="font-style:normal;font-size:13px;font-weight:600"></em></span></div>'; }).join('') +
+      '</div><div class="toast ok" id="aToast" style="left:20px;bottom:20px"><i></i>Field B is dry · pump 2 started automatically</div></div>' +
+      '<div style="display:grid;gap:16px"><div class="card"><h4>Today</h4><b style="font-size:56px;font-weight:700;letter-spacing:-.04em">31°C</b><p style="color:#8A8F9C;font-size:18px">Sunny · no rain expected for 4 days</p></div>' +
+      '<div class="card"><h4>Water used · this week</h4><div style="display:flex;align-items:end;gap:12px;height:150px">' + [70, 64, 52, 48, 41, 36, 33].map(function (h, i) { return '<span id="aw' + i + '" style="flex:1;border-radius:8px;background:linear-gradient(#7BD88F,rgba(123,216,143,.2))"></span>'; }).join('') +
+      '</div></div></div>',
+      '1.7fr 1fr') + '</div>';
+
+  /* manufacturing */
+  html += '<div class="scene" id="mfg">' + cap('Use case 06 · Manufacturing', 'Downtime, predicted', 'Machine health in real time. Failures flagged days early, work orders raised automatically.') +
+    dash('UptimeOS', '#5B7CFF', 'Plant 2 · Line 3', [['Machines online', 64], ['Equipment effectiveness', 87, '%'], ['Unplanned downtime', -41, '%'], ['Work orders open', 3]],
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-content:start">' + ['Press P1', 'Motor M4', 'Pump P7', 'Conveyor C2'].map(function (m, i) {
+        return '<div class="card" style="display:grid;justify-items:center;gap:8px"><h4 style="margin:0">' + m + '</h4><svg viewBox="0 0 120 120" style="width:150px;height:150px"><circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="12"/><circle id="mg' + i + '" cx="60" cy="60" r="48" fill="none" stroke-width="12" stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="301.6"/><text id="mv' + i + '" x="60" y="68" fill="#fff" font-size="26" font-weight="700" text-anchor="middle" font-family="Inter Tight"></text></svg><small id="ms' + i + '" style="font-size:15px;font-weight:600"></small></div>';
+      }).join('') + '</div>' +
+      '<div class="card"><h4>Motor M4 · vibration, live</h4><svg viewBox="0 0 1300 170" style="width:100%;height:190px"><line x1="0" y1="40" x2="1300" y2="40" stroke="#FF8A4C" stroke-dasharray="6 6" opacity=".6"/><polyline id="wave" fill="none" stroke="#7B95FF" stroke-width="2.5"/></svg>' +
+      '<div class="toast" id="mToast" style="right:20px;top:16px"><i></i>Motor M4 · bearing failure predicted in 6 days · work order WO-2231 raised</div></div>',
+      '1fr') + '</div>';
+
+  /* many */
+  var UC = [['heart', 'Hospital asset finder', 'Healthcare', '#FF5D8F'], ['lamp', 'Smart street lighting', 'Smart cities', '#F2C14E'], ['tank', 'Water tank levels', 'Utilities', '#5B7CFF'], ['ev', 'EV charging networks', 'Mobility', '#5EE6C8'],
+            ['cart', 'Retail freezer monitoring', 'Retail', '#5EE6C8'], ['sun', 'Solar plant performance', 'Energy', '#F2C14E'], ['park', 'Smart parking', 'Smart cities', '#C77DFF'], ['pill', 'Pharma compliance', 'Life sciences', '#FF8A4C'],
+            ['train', 'Rail & port assets', 'Transport', '#5B7CFF'], ['oil', 'Oil & gas pipelines', 'Industrial', '#FF8A4C'], ['hotel', 'Hotel room automation', 'Hospitality', '#C77DFF'], ['home', 'Connected home services', 'Consumer', '#7BD88F']];
+  html += '<div class="scene" id="many">' + cap('And hundreds more', 'If it connects, you can build it', 'Every industry, every kind of device, on the same platform.') +
+    '<div class="wall">' + UC.map(function (u, i) { return '<div class="uc" id="uc' + i + '" style="--h:' + u[3] + '"><span>' + svg(G[u[0]]) + '</span><div><b>' + u[1] + '</b><small>' + u[2] + '</small></div></div>'; }).join('') + '</div></div>';
+
+  /* end to end */
+  var PIPE = [['device', 'Devices'], ['chip', 'Gateway'], ['rules', 'Rules'], ['ticket', 'Tickets'], ['users', 'CRM'], ['phone', 'Apps'], ['home', 'Customers']];
+  html += '<div class="scene" id="e2e">' + cap('Built end to end', 'From the device to the customer', 'Data, operations and customer apps on one platform. Nothing to stitch together.') +
+    '<div class="pipe"><span class="line"></span>' + PIPE.map(function (p, i) { return '<div class="pn" id="pn' + i + '"><i style="color:' + ['#5B7CFF', '#6E8BFF', '#5EE6C8', '#FF8A4C', '#C77DFF', '#5EE6C8', '#F2C14E'][i] + '">' + svg(G[p[0]], 1.5) + '</i><b>' + p[1] + '</b></div>'; }).join('') +
+    '<span class="pulse" id="pp0"></span><span class="pulse" id="pp1"></span><span class="pulse" id="pp2"></span></div>' +
+    '<div class="prods">' + ['Device Management', 'SIM Management', 'Device Gateway', 'Asset Management', 'IoT CRM', 'Notifications & Ticketing', 'Installation App', 'Customer Applications'].map(function (p, i) { return '<span id="pr' + i + '">' + p + '</span>'; }).join('') + '</div></div>';
+
+  /* outro */
+  html += '<div class="scene center" id="outro"><h2 class="big">What will you build?</h2><p class="lede">Launch your IoT application with the #8 AEP. No code, free sandbox.</p>' +
+    '<span class="cta">Start free in the #8 AEP</span><svg class="logo" style="width:88px;height:76px;margin-top:10px;opacity:.9"><use href="#logo"/></svg></div>';
+
+  stage.innerHTML = html;
+  var routeEls = ROUTES.map(function (d, i) { return $('#rt' + i); });
+  var routeLen = routeEls.map(function (p) { return p.getTotalLength(); });
+
+  /* ---------------- frame ---------------- */
+  function show(el, o, dy, sc) {
+    el.style.opacity = o;
+    el.style.visibility = o > .002 ? 'visible' : 'hidden';
+    el.style.transform = 'translateY(' + (dy || 0) + 'px)' + (sc ? ' scale(' + sc + ')' : '');
+  }
+  function pop(el, t, at, dur) { var k = eo(seg(t, at, at + (dur || .5))); show(el, k, (1 - k) * 18); return k; }
+
+  function render(t) {
+    SC.forEach(function (s) {
+      var el = $('#' + s.id), i = eo(seg(t, s.a, s.a + .6)), o = Math.min(i, 1 - seg(t, s.b - .5, s.b));
+      if (s.id === 'outro') o = i;
+      show(el, o, 0, s.id === 'hook' || s.id === 'outro' ? 1 + (1 - i) * .04 : 0);
+      var d = el.querySelector('.dash');
+      if (d) d.style.transform = 'translateY(' + (1 - i) * 50 + 'px) scale(' + (.97 + .03 * i) + ')';
+      var c = el.querySelector('.cap');
+      if (c) c.style.transform = 'translateY(' + (1 - i) * 16 + 'px)';
+      $$('#' + s.id + ' .kpi b').forEach(function (b) {
+        var v = +b.dataset.v, dp = +b.dataset.dp, k = eo(seg(t, s.a + .3, s.a + 1.8)), u = b.dataset.u;
+        b.innerHTML = (v < 0 ? '−' : '') + fmt(Math.abs(v) * k, dp) + (u ? '<em>' + u + '</em>' : '');
+      });
+    });
+
+    // how it works
+    var hl = t - 5;
+    [0, 1, 2].forEach(function (i) { var el = $('#s3' + i); pop(el, hl, .6 + i * .5, .6); el.classList.toggle('on', hl > 2 + i * 2.4); });
+    var wd = $('#wireDot'); wd.style.left = (clamp((hl - 2) / 7.2) * 100) + '%'; wd.style.opacity = hl > 2 && hl < 9.6 ? 1 : 0;
+
+    // fleet
+    var fl = t - 15;
+    VEH.forEach(function (v, i) {
+      var p = (v[2] + Math.max(0, fl) * v[3]) % 1;
+      if (i === 2) p = clamp(Math.max(0, fl) * .09);
+      var pt = routeEls[i].getPointAtLength(p * routeLen[i]);
+      $('#vh' + i).setAttribute('transform', 'translate(' + pt.x + ',' + pt.y + ')');
+      var alert = i === 2 && fl > 2.6, idle = i === 4 && Math.sin(fl + 2) > .7;
+      $('#vk' + i).textContent = (idle ? 0 : Math.round(38 + 18 * Math.sin(fl * .9 + i * 1.7))) + ' km/h';
+      var pill = $('#vs' + i); pill.textContent = alert ? 'Left zone' : idle ? 'Idle' : 'Moving';
+      pill.className = 'pill' + (alert ? ' warn' : idle ? ' idle' : '');
+    });
+    $('#rtHi').setAttribute('stroke-dashoffset', -fl * 30);
+    pop($('#fleetToast'), fl, 2.8, .5);
+
+    // cold chain
+    var cl = t - 21.2;
+    function roomTemp(tt) { if (tt > 1.6 && tt < 4.4) return 3.6 + clamp((tt - 1.6) / 1) * 1.5; if (tt >= 4.4) return 5.1 - clamp((tt - 4.4) / 1.2) * 1.6; return 3.3 + .25 * Math.sin(tt * 2.1); }
+    [0, 1, 2, 3, 4, 5, 6, 7].forEach(function (i) {
+      var v = i === 3 ? roomTemp(cl) : 3.2 + .35 * Math.sin(cl * 1.1 + i * 1.3), st = 'Normal', col = '#5EE6C8';
+      if (v > 4) { st = cl < 3.4 ? 'Above limit' : 'Engineer on the way'; col = '#FF8A4C'; }
+      else if (i === 3 && cl > 4.4) st = 'Resolved';
+      $('#ct' + i).textContent = v.toFixed(1) + '°C';
+      $('#ct' + i).style.color = v > 4 ? '#FF8A4C' : '';
+      $('#cs' + i).textContent = st; $('#cs' + i).style.color = col;
+      $('#cr' + i).style.boxShadow = v > 4 ? 'inset 0 0 0 2px #FF8A4C, 0 0 40px -10px #FF8A4C' : '';
+    });
+    var pts = [];
+    for (var k = 0; k <= 60; k++) { var tt = cl - (60 - k) * .08; pts.push((k / 60 * 520).toFixed(1) + ',' + (300 - (roomTemp(tt) - 1) * 50).toFixed(1)); }
+    $('#coldLine').setAttribute('points', pts.join(' '));
+    $('#coldLine').setAttribute('stroke', roomTemp(cl) > 4 ? '#FF8A4C' : '#5EE6C8');
+    var ct = $('#coldToast'); pop(ct, cl, 2.6, .4);
+    ct.className = 'toast' + (cl > 5.1 ? ' ok' : '');
+    $('#coldToastTxt').textContent = cl > 5.1 ? 'Room 14 back to 3.5°C · ticket resolved in 41 min' : cl > 3.4 ? 'P1 ticket opened · Ravi K. dispatched · site manager told on WhatsApp' : 'Room 14 above 4°C';
+
+    // energy
+    var el2 = t - 27.2, d = '';
+    for (var x = 0; x <= 48; x++) {
+      var h = x / 2, y = 250 - (90 + 70 * Math.exp(-Math.pow((h - 9) / 2.5, 2)) + 110 * Math.exp(-Math.pow((h - 19.5) / 3, 2)) + 10 * Math.sin(x * .9 + el2 * 2));
+      d += (x ? 'L' : 'M') + (x / 48 * 800).toFixed(1) + ' ' + y.toFixed(1);
+    }
+    $('#eline').setAttribute('d', d); $('#earea').setAttribute('d', d + ' L800 330 L0 330 Z');
+    $('#eclip').setAttribute('width', 800 * eo(seg(el2, .4, 2.6)));
+    [62, 80, 54, 71, 90].forEach(function (hh, i) { $('#ez' + i).style.height = Math.max(0, hh * eo(seg(el2, .6 + i * .15, 1.8 + i * .15)) + 5 * Math.sin(el2 * 2 + i)) + '%'; });
+    var dk = eo(seg(el2, .8, 2.6));
+    $('#edon').setAttribute('stroke-dashoffset', 301.6 * (1 - .992 * dk));
+    $('#ebills').textContent = fmt(47830 * dk);
+
+    // buildings
+    var bl = t - 33.2;
+    ROOMS.forEach(function (r, i) {
+      var occ = .5 + .5 * Math.sin(bl * .8 + i * 1.9);
+      if (i === 2) occ = .5 + clamp((bl - 1) / 1.5) * .5 - clamp((bl - 3.6) / 1.5) * .6;
+      var co2 = Math.round(520 + occ * 620);
+      $('#rm' + i).setAttribute('fill', co2 > 1000 ? 'rgba(255,138,76,' + (.25 + occ * .35) + ')' : 'rgba(199,125,255,' + (.06 + occ * .3) + ')');
+      $('#rmv' + i).textContent = co2 + ' ppm · ' + Math.round(occ * 24) + ' people';
+    });
+    $('#bk0').textContent = (21.5 + Math.sin(bl) * .3).toFixed(1) + '°C';
+    $('#bk1').textContent = (23 + Math.sin(bl + 1) * .3 - clamp((bl - 3) / 2)).toFixed(1) + '°C';
+    pop($('#bToast'), bl, 3, .5);
+
+    // agriculture
+    var al = t - 39.2;
+    'ABCDEFGHIJKL'.split('').forEach(function (f, i) {
+      var m = 34 + 10 * Math.sin(i * 2.3) + 2 * Math.sin(al + i), pump = i === 6 || i === 9;
+      if (i === 1) { m = al < 2.2 ? 19 : 19 + clamp((al - 2.4) / 3) * 18; pump = al > 2.4; }
+      var dry = m < 25;
+      $('#fd' + i).style.background = dry ? 'rgba(242,193,78,.28)' : 'rgba(123,216,143,' + (.08 + (m - 20) / 40 * .4) + ')';
+      $('#fd' + i).style.boxShadow = dry ? 'inset 0 0 0 2px #F2C14E' : pump ? 'inset 0 0 0 2px #5B7CFF' : 'inset 0 0 0 1px rgba(255,255,255,.1)';
+      $('#fv' + i).textContent = Math.round(m) + '%';
+      var fp = $('#fp' + i); fp.textContent = dry ? 'Dry' : pump ? 'Pump on' : ''; fp.style.color = dry ? '#F2C14E' : '#8FB0FF';
+    });
+    [70, 64, 52, 48, 41, 36, 33].forEach(function (h, i) { $('#aw' + i).style.height = h * eo(seg(al, .4 + i * .12, 1.4 + i * .12)) + '%'; });
+    pop($('#aToast'), al, 2.4, .5);
+
+    // manufacturing
+    var ml = t - 45.2;
+    [96, 71, 92, 88].forEach(function (h, i) {
+      var grow = eo(seg(ml, .4, 1.8)), v = h * grow;
+      if (i === 1) v = Math.max(38, 71 - clamp((ml - 2) / 1.5) * 33) * grow;
+      var c = v < 50 && grow > .99 ? '#FF8A4C' : '#5EE6C8';
+      var g = $('#mg' + i); g.setAttribute('stroke', c); g.setAttribute('stroke-dashoffset', 301.6 * (1 - v / 100));
+      $('#mv' + i).textContent = Math.round(v) + '%';
+      $('#ms' + i).textContent = c === '#FF8A4C' ? 'Failure predicted' : 'Healthy'; $('#ms' + i).style.color = c;
+    });
+    var wp = [];
+    for (var wx = 0; wx <= 260; wx++) {
+      var w2 = ml * 3 + wx * .09, amp = 22 + clamp((ml - 2) / 1.5) * 34 * (wx / 260);
+      wp.push((wx * 5) + ',' + (100 - amp * Math.sin(w2 * 2.3) * (0.6 + 0.4 * Math.sin(w2 * .7))).toFixed(1));
+    }
+    $('#wave').setAttribute('points', wp.join(' '));
+    $('#wave').setAttribute('stroke', ml > 3 ? '#FF8A4C' : '#7B95FF');
+    pop($('#mToast'), ml, 3.2, .5);
+
+    // many
+    var nl = t - 51.2;
+    UC.forEach(function (u, i) { var kk = eo(seg(nl, .3 + i * .12, .8 + i * .12)); show($('#uc' + i), kk, (1 - kk) * 30, .94 + .06 * kk); });
+
+    // end to end
+    var pl = t - 56.2, lit = ((pl - 1.5) * 1.6) % 8;
+    PIPE.forEach(function (p, i) { pop($('#pn' + i), pl, .3 + i * .15, .5); $('#pn' + i).classList.toggle('on', pl > 1.5 && lit > i - .3 && lit < i + .9); });
+    [0, 1, 2].forEach(function (kk) {
+      var p = ((pl - 1.5) * .17 + kk / 3) % 1, el = $('#pp' + kk);
+      el.style.left = (60 + p * 1480) + 'px'; el.style.opacity = pl > 1.5 ? Math.sin(p * Math.PI) : 0;
+    });
+    for (var r = 0; r < 8; r++) pop($('#pr' + r), pl, 2 + r * .1, .4);
+  }
+
+  /* ---------------- playback ---------------- */
+  function fit() { var s = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = 'scale(' + s + ')'; }
+  window.seek = function (t) { render(Math.max(0, Math.min(DURATION, t))); };
+  window.FILM_DURATION = DURATION;
+  if (/capture/.test(location.search)) {
+    document.fonts.ready.then(function () { render(0); window.FILM_READY = true; });
+  } else {
+    fit(); addEventListener('resize', fit);
+    var t0 = null;
+    document.fonts.ready.then(function () {
+      requestAnimationFrame(function loop(now) { if (t0 === null) t0 = now; render(((now - t0) / 1000) % DURATION); requestAnimationFrame(loop); });
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>#8 Marketplace</title>
+  <meta name="description" content="The #8 IoT Marketplace: buy and sell certified IoT devices, apps, integrations, connectivity and services, and deploy them straight into your #8 AEP blueprint.">
+  <meta name="theme-color" content="#05060A">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/market.css">
+</head>
+<body class="mp">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="logo" viewBox="0 0 96 82">
+      <polygon points="31,18 41,18 25,80 15,80"/>
+      <polygon points="53,18 63,18 47,80 37,80"/>
+      <polygon points="10,32 72,32 69.5,42 7.5,42"/>
+      <polygon points="4,56 66,56 63.5,66 1.5,66"/>
+      <g fill="none" stroke="currentColor" stroke-width="2.2">
+        <ellipse cx="84" cy="7.6" rx="5.6" ry="5.2"/>
+        <ellipse cx="84" cy="19.6" rx="6.8" ry="6.6"/>
+      </g>
+    </symbol>
+  </svg>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav is-scrolled" id="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="brand" aria-label="#8 home"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg></a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="index.html#aep">Platform</a>
+        <a href="index.html#products">Ecosystem</a>
+        <a href="index.html#industries">Industries</a>
+        <a href="marketplace.html" aria-current="page" class="is-current">Marketplace</a>
+      </nav>
+      <div class="nav__actions">
+        <a class="link-quiet" href="#sell">Sell on #8</a>
+        <button class="cart-btn" id="cartBtn" type="button" aria-controls="cart" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2"/><circle cx="10" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg>
+          <span>Cart</span><b id="cartCount">0</b>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="mh">
+      <div class="wrap mh__grid">
+        <div class="mh__copy">
+          <p class="hero__kicker">The #8 IoT Marketplace</p>
+          <h1 class="mh__title">Everything your things need.<br><span class="grad-text">Bought, sold and deployed in one place.</span></h1>
+          <p class="section-lede">Certified devices, apps, integrations, data plans and services from device makers, developers, partners and carriers. Everything here works with the #8 ecosystem and drops straight into your AEP blueprint.</p>
+          <form class="mh__search" id="heroSearch" role="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <label class="sr-only" for="heroQ">Search the marketplace</label>
+            <input id="heroQ" type="search" placeholder="Search devices, apps, plans or services" autocomplete="off">
+            <button class="btn btn--signal btn--sm" type="submit">Search</button>
+          </form>
+          <div class="mh__quick" id="quick" aria-label="Popular searches"></div>
+          <dl class="mh__stats" id="mhStats"></dl>
+        </div>
+        <div class="mh__stack" aria-hidden="true" id="heroStack"></div>
+      </div>
+    </section>
+
+    <!-- Outcome kits -->
+    <section class="kits" aria-labelledby="kitsTitle">
+      <div class="wrap">
+        <div class="kits__head">
+          <h2 class="kits__title" id="kitsTitle">Start with an outcome kit.<br><span class="muted">Everything one outcome needs, in one order.</span></h2>
+          <p class="section-lede">Devices, connectivity, the app and installation, picked by #8 to work together. Order the kit, then change anything you like.</p>
+        </div>
+        <div class="kits__grid" id="kitsGrid"></div>
+      </div>
+    </section>
+
+    <!-- Browse -->
+    <section class="browse" id="browse">
+      <div class="wrap browse__grid">
+        <aside class="filters" aria-label="Filters">
+          <div class="filters__group">
+            <h2 class="filters__h">Category</h2>
+            <div class="filters__list" id="fType" role="radiogroup" aria-label="Category"></div>
+          </div>
+          <div class="filters__group">
+            <h2 class="filters__h">Industry</h2>
+            <div class="filters__list" id="fIndustry" role="radiogroup" aria-label="Industry"></div>
+          </div>
+          <div class="filters__group">
+            <h2 class="filters__h">Sold by</h2>
+            <div class="filters__list" id="fSeller" role="radiogroup" aria-label="Seller type"></div>
+          </div>
+          <label class="filters__cert">
+            <span><b>#8 Certified only</b><small>Tested by #8 for protocol, security and onboarding</small></span>
+            <input type="checkbox" id="fCert" class="sr-only">
+            <span class="sw" aria-hidden="true"><i></i></span>
+          </label>
+        </aside>
+
+        <div class="results">
+          <div class="results__bar">
+            <p id="resultCount" role="status">Showing all listings</p>
+            <div class="results__tools">
+              <label class="sr-only" for="q">Search</label>
+              <input id="q" type="search" class="results__q" placeholder="Filter results" autocomplete="off">
+              <label class="sr-only" for="sort">Sort by</label>
+              <select id="sort" class="results__sort">
+                <option value="featured">Featured</option>
+                <option value="rating">Highest rated</option>
+                <option value="reviews">Most reviewed</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+              </select>
+              <button type="button" class="results__filters-btn" id="filtersBtn" aria-expanded="false">Filters</button>
+            </div>
+          </div>
+          <div class="results__grid" id="grid"></div>
+          <div class="results__empty" id="empty" hidden>
+            <b>Nothing matches those filters.</b>
+            <p>Try a broader search, or <button type="button" class="link" id="clearAll">clear all filters</button>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it plugs into the AEP -->
+    <section class="mx light">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="display">Bought here.<br><span class="muted">Running in your app the same week.</span></h2>
+          <p class="section-lede">The Marketplace is part of the AEP, not a separate shop. What you buy is already set up to work with the outcome you chose.</p>
+        </div>
+        <ol class="mx__steps">
+          <li><span>1</span><h3>Choose an outcome</h3><p>Tell the AEP what you want to achieve, like zero spoiled stock or remote meter reading.</p></li>
+          <li><span>2</span><h3>Get matched listings</h3><p>The AEP recommends certified devices, plans, apps and installers that fit that outcome.</p></li>
+          <li><span>3</span><h3>Order in one click</h3><p>One cart, one invoice, whether the items come from one seller or ten.</p></li>
+          <li><span>4</span><h3>Devices onboard themselves</h3><p>Hardware ships pre-provisioned for your tenant. Plug it in and it starts reporting.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Sell -->
+    <section class="sell" id="sell">
+      <div class="wrap">
+        <div class="section-head section-head--dark">
+          <h2 class="display">Sell on #8.<br><span class="grad-text">Reach every team building IoT.</span></h2>
+          <p class="section-lede">Whether you make devices, build software, install or operate, or run a network, the #8 Marketplace puts your product inside the blueprints customers are launching.</p>
+        </div>
+
+        <div class="sell__tabs" role="tablist" aria-label="Seller types" id="sellTabs"></div>
+        <div class="sell__panel" id="sellPanel" role="tabpanel"></div>
+
+        <ol class="sell__flow">
+          <li><span>01</span><h3>List</h3><p>Create a listing with specs, pricing and the outcomes it serves.</p></li>
+          <li><span>02</span><h3>Certify</h3><p>The #8 lab checks protocol support, security and zero-touch onboarding.</p></li>
+          <li><span>03</span><h3>Get discovered</h3><p>Certified listings are recommended inside matching AEP blueprints.</p></li>
+          <li><span>04</span><h3>Get paid</h3><p>#8 handles invoicing and collections and pays out to you every month.</p></li>
+        </ol>
+
+        <form class="sell__form" id="sellForm" novalidate>
+          <h3>Apply to sell</h3>
+          <div class="sell__fields">
+            <label><span>Company</span><input name="company" required autocomplete="organization"></label>
+            <label><span>Work email</span><input name="email" type="email" required autocomplete="email"></label>
+            <label><span>I want to sell</span><select name="type" id="sellType"></select></label>
+            <label class="sell__wide"><span>What you sell, in a sentence</span><input name="what" maxlength="140" placeholder="For example: NB-IoT water meters for municipal utilities"></label>
+          </div>
+          <button class="btn btn--signal" type="submit">Send application</button>
+          <p class="sell__msg" id="sellMsg" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__base">
+      <span>© <span id="year">2026</span> #8. All rights reserved. Listings shown are samples.</span>
+      <span class="footer__legal"><a href="index.html">Home</a><a href="index.html#aep">AEP</a><a href="#sell">Sell on #8</a></span>
+    </div>
+  </footer>
+
+  <!-- Product detail -->
+  <dialog class="pd" id="pd" aria-labelledby="pdName">
+    <div class="pd__inner" id="pdBody"></div>
+  </dialog>
+
+  <!-- Cart -->
+  <div class="cart-scrim" id="cartScrim" hidden></div>
+  <aside class="cart" id="cart" aria-label="Cart" hidden>
+    <div class="cart__head"><h2>Your cart</h2><button type="button" class="cart__close" id="cartClose" aria-label="Close cart">×</button></div>
+    <div class="cart__body" id="cartBody"></div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/js/products.js"></script>
+  <script src="assets/js/market-data.js"></script>
+  <script src="assets/js/market.js"></script>
+</body>
+</html>
