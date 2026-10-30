@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>#8 — Operations-driven IoT</title>
+  <meta name="description" content="#8 connects, controls and makes the world's things intelligent. Device, SIM, gateway, asset, CRM, ticketing, installation and customer apps — plus a no-code AEP to launch your own IoT application.">
+  <meta name="theme-color" content="#05060A">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <!-- #8 logo, defined once and reused -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="logo" viewBox="0 0 96 82">
+      <polygon points="31,18 41,18 25,80 15,80"/>
+      <polygon points="53,18 63,18 47,80 37,80"/>
+      <polygon points="10,32 72,32 69.5,42 7.5,42"/>
+      <polygon points="4,56 66,56 63.5,66 1.5,66"/>
+      <g fill="none" stroke="currentColor" stroke-width="2.2">
+        <ellipse cx="84" cy="7.6" rx="5.6" ry="5.2"/>
+        <ellipse cx="84" cy="19.6" rx="6.8" ry="6.6"/>
+      </g>
+    </symbol>
+  </svg>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#top" class="brand" aria-label="#8 home">
+        <svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#shift">Why #8</a>
+        <a href="#aep">Platform</a>
+        <div class="nav__menu">
+          <button class="nav__menu-btn" aria-expanded="false" aria-controls="mega">Ecosystem</button>
+          <div class="mega" id="mega" hidden>
+            <div class="mega__grid" id="megaGrid"></div>
+            <a class="mega__aep" href="app.html?app=aep">
+              <strong>AEP</strong>
+              <span>Choose an outcome and get a complete application, no code</span>
+            </a>
+          </div>
+        </div>
+        <a href="#loop">How it works</a>
+        <a href="#industries">Industries</a>
+      </nav>
+      <div class="nav__actions">
+        <a class="link-quiet" href="app.html?app=aep">Sign in</a>
+        <a class="btn btn--light btn--sm" href="#contact">Talk to us</a>
+        <button class="nav__burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="drawer" id="drawer" hidden>
+      <a href="#shift">Why #8</a>
+      <a href="#aep">Platform</a>
+      <a href="#products">Ecosystem</a>
+      <a href="#loop">How it works</a>
+      <a href="#industries">Industries</a>
+      <a href="#contact" class="btn btn--light">Talk to us</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ============ 01 HERO ============ -->
+    <section class="hero" id="top">
+      <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
+      <div class="hero__veil" aria-hidden="true"></div>
+      <div class="hero__content wrap">
+        <p class="hero__kicker load" style="--d:0">The operations-driven IoT platform</p>
+        <h1 class="hero__title">
+          <span class="load" style="--d:1">Connect.</span>
+          <span class="load" style="--d:2">Control.</span>
+          <span class="load hero__title-grad" style="--d:3">Make it intelligent.</span>
+        </h1>
+        <p class="hero__lede load" style="--d:4">#8 is a complete IoT ecosystem. Devices, SIMs, assets, tickets and customers all run in one loop, the way your teams run the business. Tell us the outcome you want and we build the whole application for you. No code.</p>
+        <div class="hero__cta load" style="--d:5">
+          <a class="btn btn--signal" href="#aep">Start with an outcome</a>
+          <a class="btn btn--ghost" href="#products">Explore the ecosystem</a>
+        </div>
+      </div>
+      <div class="hero__ticker load" style="--d:6" aria-label="Platform status">
+        <div><b data-count="2400000000">0</b><span>messages handled a day</span></div>
+        <div><b data-count="120" data-suffix="+">0</b><span>device protocols & models</span></div>
+        <div><b>99.99%</b><span>platform availability</span></div>
+        <div><b>0</b><span>lines of code to launch</span></div>
+      </div>
+      <a class="hero__scroll" href="#shift" aria-label="Scroll to next section"><span></span></a>
+    </section>
+
+    <!-- ============ 02 THE SHIFT ============ -->
+    <section class="shift light" id="shift">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="display">Most IoT stops at the dashboard.<br><span class="muted">#8 starts there.</span></h2>
+          <p class="section-lede">Data-driven platforms tell you something happened. Operations-driven platforms make sure someone does something about it. Flip the switch and watch the same event play out.</p>
+        </div>
+
+        <div class="shift__switch" role="tablist" aria-label="Compare approaches">
+          <button role="tab" aria-selected="false" id="tab-data" data-mode="data">Data-driven IoT</button>
+          <button role="tab" aria-selected="true" id="tab-ops" data-mode="ops">Operations-driven #8</button>
+          <span class="shift__thumb" aria-hidden="true"></span>
+        </div>
+
+        <div class="shift__stage" id="shiftStage" data-mode="ops">
+          <div class="shift__event">
+            <div class="event-card">
+              <div class="event-card__top">
+                <span class="dot dot--ember"></span>
+                <span>Cold room 14 · Chennai DC</span>
+                <time>02:14 AM</time>
+              </div>
+              <div class="event-card__value"><b>9.8°C</b><span>limit 4°C</span></div>
+              <svg class="spark" viewBox="0 0 300 80" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M0 62 L30 60 L60 61 L90 58 L120 60 L150 57 L180 55 L210 40 L240 26 L270 18 L300 12" />
+              </svg>
+            </div>
+          </div>
+
+          <ol class="shift__flow shift__flow--data" aria-label="Data-driven outcome">
+            <li><b>Chart turns red</b><span>A threshold breach appears on a dashboard.</span></li>
+            <li><b>Email to a shared inbox</b><span>Nobody owns it at 2 AM.</span></li>
+            <li class="is-bad"><b>Found at 9:40 AM</b><span>₹14 lakh of vaccine stock written off. The customer heard first.</span></li>
+          </ol>
+
+          <ol class="shift__flow shift__flow--ops" aria-label="Operations-driven outcome">
+            <li><b>Ticket #48213 opened</b><span>Priority P1, linked to asset, contract and SLA.</span><em>+0.4s</em></li>
+            <li><b>Technician dispatched</b><span>Nearest on-call engineer, with the compressor’s history.</span><em>+6s</em></li>
+            <li><b>Customer notified</b><span>WhatsApp to the site manager with live status.</span><em>+8s</em></li>
+            <li><b>Compressor restarted remotely</b><span>Command sent through the gateway — temperature recovering.</span><em>+3m</em></li>
+            <li class="is-good"><b>Resolved before breakfast</b><span>Zero stock lost. CRM updated. SLA met.</span><em>+41m</em></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 03 AEP ============ -->
+    <section class="aep" id="aep">
+      <div class="wrap">
+        <div class="section-head section-head--dark">
+          <h2 class="display">Tell us the outcome.<br><span class="grad-text">#8 builds the application.</span></h2>
+          <p class="section-lede">Other platforms hand you tools and wish you luck. The #8 AEP starts from what you want to achieve. Pick an outcome, or write your own, and the AEP puts together a complete, working IoT application from the whole ecosystem. You customise it, launch it and go live. No code at any step.</p>
+        </div>
+
+        <ol class="aep__track" id="aepTrack" aria-label="How the AEP works">
+          <li data-stage="0"><span>1</span>Choose an outcome</li>
+          <li data-stage="1"><span>2</span>#8 builds the app</li>
+          <li data-stage="2"><span>3</span>Customise</li>
+          <li data-stage="3"><span>4</span>Launch &amp; go live</li>
+        </ol>
+
+        <div class="aep__body">
+          <div class="outcomes">
+            <p class="outcomes__q">What should your things achieve?</p>
+            <div class="outcomes__list" id="outcomeList" role="radiogroup" aria-label="Choose an outcome"></div>
+            <form class="outcomes__own" id="outcomeForm" autocomplete="off">
+              <label for="outcomeInput" class="sr-only">Describe your own outcome</label>
+              <input id="outcomeInput" type="text" maxlength="90" placeholder="Or describe your own outcome…">
+              <button class="btn btn--signal btn--sm" type="submit">Build it</button>
+            </form>
+          </div>
+
+          <div class="studio" id="studio" data-stage="0">
+            <div class="studio__bar">
+              <span></span><span></span><span></span>
+              <em>#8 AEP · Outcome Studio</em>
+              <b class="studio__status" id="studioStatus" role="status">Waiting for an outcome</b>
+            </div>
+            <div class="studio__body">
+              <div class="studio__left">
+                <div class="studio__outcome">
+                  <small>Outcome</small>
+                  <p id="studioOutcome">Choose an outcome to begin</p>
+                  <span class="studio__kpi" id="studioKpi"></span>
+                </div>
+                <div class="studio__progress" aria-hidden="true"><i id="studioBar"></i></div>
+                <ul class="studio__modules" id="studioModules"></ul>
+              </div>
+              <div class="studio__right">
+                <div class="studio__custom">
+                  <small>Your brand</small>
+                  <div class="swatches" id="swatches" role="radiogroup" aria-label="Brand colour">
+                    <button type="button" role="radio" aria-checked="true" aria-label="Signal blue" style="--s:#5B7CFF"></button>
+                    <button type="button" role="radio" aria-checked="false" aria-label="Ion teal" style="--s:#5EE6C8"></button>
+                    <button type="button" role="radio" aria-checked="false" aria-label="Ember orange" style="--s:#FF8A4C"></button>
+                    <button type="button" role="radio" aria-checked="false" aria-label="Orchid" style="--s:#C77DFF"></button>
+                    <button type="button" role="radio" aria-checked="false" aria-label="Lime" style="--s:#B8E35A"></button>
+                  </div>
+                </div>
+                <div class="sphone" id="sphone">
+                  <div class="sphone__notch"></div>
+                  <div class="sphone__h"><i></i><span id="sphoneName">Your app</span></div>
+                  <div class="sphone__body" id="sphoneBody"></div>
+                  <div class="launch-ring"></div>
+                </div>
+                <p class="studio__live"><span class="dot dot--ion"></span><span id="studioUrl">Live</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="aep__cta">
+          <a class="btn btn--signal" href="app.html?app=aep">Start with your outcome</a>
+          <span class="muted">Free sandbox. Your first app live in an afternoon.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 04 PRODUCTS ============ -->
+    <section class="products" id="products">
+      <div class="wrap">
+        <div class="section-head section-head--dark">
+          <h2 class="display">Not eight products.<br><span class="grad-text">One IoT ecosystem.</span></h2>
+          <p class="section-lede">Every #8 product shares one data model, one identity and one event stream. A single signal from the field moves through all eight on its own, so your teams never integrate, export or re-type anything. Watch one event make the trip.</p>
+        </div>
+
+        <div class="eco" id="eco">
+          <svg class="eco__svg" id="ecoSvg" role="img" aria-labelledby="ecoCaption"></svg>
+          <div class="eco__caption">
+            <span class="eco__step" id="ecoStep">1 / 8</span>
+            <p id="ecoCaption">A technician installs a sensor in Cold Room 14 and certifies it on site.</p>
+          </div>
+        </div>
+
+        <h3 class="suite__intro">Explore each part of the ecosystem</h3>
+        <div class="suite">
+          <div class="suite__list" role="tablist" aria-label="#8 products" id="suiteList"></div>
+          <div class="suite__stage" id="suiteStage" role="tabpanel" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 05 THE LOOP ============ -->
+    <section class="loop light" id="loop">
+      <div class="wrap loop__wrap">
+        <div class="loop__text">
+          <h2 class="display">The shape of&nbsp;#8 <span class="muted">is the shape of the&nbsp;work.</span></h2>
+          <p class="section-lede">An IoT operation never ends — it loops. Install, connect, monitor, detect, act, resolve, engage, learn, and again. Our name is that loop, and every product sits on it.</p>
+          <ul class="loop__legend" id="loopLegend"></ul>
+        </div>
+        <div class="loop__figure">
+          <svg viewBox="0 0 640 340" class="loop__svg" id="loopSvg" role="img" aria-label="Figure-eight lifecycle with eight stations">
+            <defs>
+              <linearGradient id="lg" x1="0" x2="1">
+                <stop offset="0" stop-color="#5B7CFF"/>
+                <stop offset=".5" stop-color="#5EE6C8"/>
+                <stop offset="1" stop-color="#FF8A4C"/>
+              </linearGradient>
+            </defs>
+            <path id="loopPath" class="loop__track" d=""/>
+            <path id="loopPathGlow" class="loop__glow" d=""/>
+            <g id="loopStations"></g>
+            <circle id="loopPulse" r="9" class="loop__pulse"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 06 LIVE OPS ============ -->
+    <section class="ops" id="ops">
+      <div class="wrap">
+        <div class="section-head section-head--dark">
+          <h2 class="display">Right now, somewhere,<br><span class="grad-text">a thing just asked for help.</span></h2>
+          <p class="section-lede">This is what operations-driven looks like in motion: events arriving, decisions made, people and machines moving — without anyone watching a chart.</p>
+        </div>
+        <div class="ops__grid">
+          <div class="ops__map" aria-hidden="true">
+            <svg viewBox="0 0 800 400" id="opsMap"></svg>
+          </div>
+          <div class="ops__feed">
+            <div class="ops__feed-head"><span class="dot dot--ion pulse"></span> Live operations</div>
+            <ul id="opsFeed" aria-live="off"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 07 INDUSTRIES ============ -->
+    <section class="industries light" id="industries">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="display">Every industry.<br><span class="muted">One ecosystem underneath.</span></h2>
+          <p class="section-lede">Utilities, cold chain, fleets, buildings, farms, hospitals, factories, cities and more. The industry changes, but the loop stays the same: connect, control, act. #8 ships a complete application for each one.</p>
+        </div>
+      </div>
+      <div class="rail" id="rail" tabindex="0" aria-label="Industries, scroll horizontally">
+
+        <article class="ind" style="--hue:228">
+          <svg class="ind__art" viewBox="0 0 320 200" aria-hidden="true">
+            <path class="g" d="M0 50H320M0 100H320M0 150H320M80 0V200M160 0V200M240 0V200"/>
+            <rect class="l" x="60" y="34" width="100" height="146" rx="16"/>
+            <rect class="a" x="76" y="54" width="68" height="32" rx="6"/>
+            <text class="t" x="110" y="76">04821</text>
+            <circle class="l" cx="110" cy="132" r="24"/>
+            <path class="a" d="M110 132l15-13"/>
+            <path class="w" d="M172 44a16 16 0 0 1 16 16"/><path class="w w2" d="M172 30a30 30 0 0 1 30 30"/><path class="w w3" d="M172 16a44 44 0 0 1 44 44"/>
+            <path class="l" d="M262 186V46M236 64h52M242 84h40"/>
+            <path class="l dashed" d="M160 120C200 120 220 70 236 64"/>
+            <circle class="f p" cx="236" cy="64" r="4"/>
+          </svg>
+          <span class="ind__k">Utilities</span><h3>Smart metering at national scale</h3><p>Millions of meters, remote disconnects, outage tickets raised before the call centre rings.</p>
+        </article>
+
+        <article class="ind" style="--hue:168">
+          <svg class="ind__art" viewBox="0 0 320 200" aria-hidden="true">
+            <rect class="a" x="92" y="10" width="76" height="30" rx="15"/>
+            <text class="t" x="130" y="31">3.6°C</text>
+            <path class="a dashed" d="M130 40V64"/>
+            <rect class="l" x="34" y="64" width="176" height="90" rx="10"/>
+            <g class="a" transform="translate(122 109)"><path d="M0-24V24M-21-12L21 12M-21 12L21-12"/><circle r="5" class="f"/></g>
+            <path class="l" d="M210 92h44l30 30v32h-74z"/>
+            <path class="l" d="M222 100h28l18 20h-46z"/>
+            <circle class="l" cx="78" cy="162" r="15"/><circle class="l" cx="170" cy="162" r="15"/><circle class="l" cx="254" cy="162" r="15"/>
+            <path class="g" d="M0 182H320"/>
+            <circle class="f p" cx="34" cy="64" r="4"/>
+          </svg>
+          <span class="ind__k">Cold chain</span><h3>Nothing spoils on our watch</h3><p>Temperature breaches become dispatched engineers and saved stock, not morning reports.</p>
+        </article>
+
+        <article class="ind" style="--hue:22">
+          <svg class="ind__art" viewBox="0 0 320 200" aria-hidden="true">
+            <path class="g" d="M0 50H320M0 100H320M0 150H320M80 0V200M160 0V200M240 0V200"/>
+            <path class="l dashed" id="route" d="M30 176C90 120 50 60 140 70S220 160 284 54"/>
+            <circle class="l" cx="30" cy="176" r="7"/>
+            <path class="a" d="M284 54c0 0-16-16-16-28a16 16 0 0 1 32 0c0 12-16 28-16 28z"/>
+            <circle class="f" cx="284" cy="26" r="5"/>
+            <circle class="f" r="7"><animateMotion dur="7s" repeatCount="indefinite" path="M30 176C90 120 50 60 140 70S220 160 284 54"/></circle>
+            <rect class="a" x="170" y="150" width="96" height="30" rx="15"/>
+            <text class="t s" x="218" y="170">ETA 14 min</text>
+          </svg>
+          <span class="ind__k">Fleet &amp; logistics</span><h3>Every vehicle, every trip, every SIM</h3><p>Telematics, driver behaviour, fuel and data costs, managed from one place.</p>
+        </article>
+
+        <article class="ind" style="--hue:260">
+          <svg class="ind__art" viewBox="0 0 320 200" aria-hidden="true">
+            <path class="l" d="M50 190V70h96v120M146 190V36h110v154M24 190h272"/>
+            <g class="win">
+              <rect x="64" y="86" width="14" height="14"/><rect class="on" x="90" y="86" width="14" height="14"/><rect x="116" y="86" width="14" height="14"/>
+              <rect x="64" y="114" width="14" height="14"/><rect x="90" y="114" width="14" height="14"/><rect class="on" x="116" y="114" width="14" height="14"/>
+              <rect class="on" x="64" y="142" width="14" height="14"/><rect x="90" y="142" width="14" height="14"/><rect x="116" y="142" width="14" height="14"/>
+              <rect x="162" y="52" width="14" height="14"/><rect class="on" x="188" y="52" width="14" height="14"/><rect x="214" y="52" width="14" height="14"/>
+              <rect x="162" y="80" width="14" height="14"/><rect x="188" y="80" width="14" height="14"/><rect class="on warn" x="214" y="80" width="14" height="14"/>
+              <rect class="on" x="162" y="108" width="14" height="14"/><rect x="188" y="108" width="14" height="14"/><rect x="214" y="108" width="14" height="14"/>
+              <rect x="162" y="136" width="14" height="14"/><rect class="on" x="188" y="136" width="14" height="14"/><rect x="214" y="136" width="14" height="14"/>
+            </g>
+            <path class="l" d="M232 36V10"/><circle class="f p" cx="232" cy="10" r="4"/>
+            <path class="w" d="M244 4a14 14 0 0 1 10 12"/><path class="w w2" d="M248-6a26 26 0 0 1 18 22"/>
+          </svg>
+          <span class="ind__k">Smart buildings</span><h3>Buildings that file their own tickets</h3><p>HVAC, lifts, energy and access, with maintenance that schedules itself.</p>
+        </article>
+
+        <article class="ind" style="--hue:140">
+          <svg class="ind__art" viewBox="0 0 320 200" aria-hidden="true">
+            <circle class="a" cx="262" cy="36" r="18"/>
+            <path class="a" d="M262 6v-6M262 72v-6M292 36h6M226 36h6"/>
+            <path class="l" d="M0 112H320"/>
+            <path class="g2" d="M0 200L120 112M60 200L140 112M130 200L160 112M200 200L180 112M270 200L200 112M330 200L220 112"/>
+            <path class="l" d="M92 176V74"/>
+            <rect class="l" x="64" y="52" width="56" height="22" rx="3"/>
+            <path class="l" d="M78 52v22M92 52v22M106 52v22"/>
+            <circle class="f p" cx="92" cy="118" r="5"/>
+            <path class="w" d="M104 104a16 16 0 0 1 12 14"/><path class="w w2" d="M108 92a28 28 0 0 1 20 26"/>
+            <path class="a" d="M200 120c0 0-16 18-16 30a16 16 0 0 0 32 0c0-12-16-30-16-30z"/>
+          </svg>
+          <span class="ind__k">Agriculture</span><h3>Fields that report in</h3><p>Soil, pumps and weather stations on low-power networks, with alerts farmers act on.</p>
+        </article>
+
+        <article class="ind" style="--hue:350">
+          <svg class="ind__art" viewBox="0 0 320 200" aria-hidden="true">
+            <rect class="l" x="40" y="24" width="240" height="136" rx="16"/>
+            <path class="l" d="M160 160v22M120 186h80"/>
+            <path class="a ecg" d="M58 100h60l12-34 16 66 12-44 10 12h104"/>
+            <path class="l" d="M248 40v20M238 50h20"/>
+            <text class="t s" x="76" y="52" text-anchor="start">72 bpm</text>
+            <circle class="f p" cx="262" cy="100" r="4"/>
+          </svg>
+          <span class="ind__k">Healthcare</span><h3>Equipment that is always ready</h3><p>Asset tracking and uptime for critical devices across hospitals and homes.</p>
+        </article>
+
+        <article class="ind" style="--hue:200">
+          <svg class="ind__art" viewBox="0 0 320 200" aria-hidden="true">
+            <path class="l" d="M50 186h96M66 186v-18h64v18"/>
+            <path class="l thick" d="M98 168L128 102L206 82"/>
+            <circle class="l" cx="98" cy="168" r="8"/><circle class="l" cx="128" cy="102" r="8"/><circle class="l" cx="206" cy="82" r="6"/>
+            <path class="l" d="M206 82l20-12M206 82l22 10"/>
+            <g class="gear"><circle class="a" cx="258" cy="148" r="30" stroke-dasharray="7 7"/></g>
+            <circle class="a" cx="258" cy="148" r="18"/><circle class="f" cx="258" cy="148" r="5"/>
+            <path class="l" d="M160 196h150"/>
+            <circle class="f p" cx="128" cy="102" r="3"/>
+          </svg>
+          <span class="ind__k">Manufacturing</span><h3>Downtime, predicted and prevented</h3><p>Machine health and OEE flow straight into maintenance work orders.</p>
+        </article>
+
+        <article class="ind" style="--hue:45">
+          <svg class="ind__art" viewBox="0 0 320 200" aria-hidden="true">
+            <path class="l" d="M0 190V128H36V96H68V140H96V60H138V132H166V104H196V150H222V84H250V190"/>
+            <path class="l" d="M298 190V64q0-18-18-18h-18"/>
+            <path class="a" d="M246 46h22l-4 9h-14z"/>
+            <path class="cone" d="M250 55L230 130H286L264 55Z"/>
+            <path class="a dashed" d="M117 60L52 96M117 60L236 84M236 84L257 50"/>
+            <circle class="f p" cx="117" cy="60" r="4"/><circle class="f p" cx="52" cy="96" r="4"/><circle class="f p" cx="236" cy="84" r="4"/>
+          </svg>
+          <span class="ind__k">Smart cities</span><h3>Streetlights to water mains</h3><p>City-wide infrastructure with citizen-facing apps your council can brand.</p>
+        </article>
+
+        <a class="ind ind--you" href="#aep" style="--hue:228">
+          <svg class="ind__art" viewBox="0 0 320 200" aria-hidden="true">
+            <circle class="l dashed" cx="160" cy="96" r="80"/>
+            <svg x="104" y="46" width="112" height="96" viewBox="0 0 96 82" class="ind__logo"><use href="#logo"/></svg>
+          </svg>
+          <span class="ind__k">Your industry</span><h3>Describe the outcome. We build the app.</h3><p>Not on the list? Tell the AEP what you need to achieve and get a complete application.</p>
+        </a>
+      </div>
+      <div class="wrap rail__hint muted">Drag or scroll to see more industries</div>
+    </section>
+
+    <!-- ============ 08 EVERYTHING IoT ============ -->
+    <section class="matrix" id="matrix">
+      <div class="wrap">
+        <div class="section-head section-head--dark">
+          <h2 class="display">Everything IoT.<br><span class="muted">Nothing stitched together.</span></h2>
+          <p class="section-lede">A typical IoT stack is six vendors, four contracts and a dozen integrations. #8 is one.</p>
+        </div>
+        <div class="matrix__table" role="table" aria-label="Capability comparison">
+          <div class="matrix__row matrix__row--head" role="row">
+            <span role="columnheader">Capability</span>
+            <span role="columnheader">Typical stitched stack</span>
+            <span role="columnheader">#8</span>
+          </div>
+          <div class="matrix__row" role="row"><span role="cell">Device & firmware lifecycle</span><span role="cell">Vendor A</span><span role="cell" class="yes">Built in</span></div>
+          <div class="matrix__row" role="row"><span role="cell">Multi-carrier SIM control</span><span role="cell">Carrier portals ×3</span><span role="cell" class="yes">Built in</span></div>
+          <div class="matrix__row" role="row"><span role="cell">Protocol gateway & edge</span><span role="cell">Vendor B + custom code</span><span role="cell" class="yes">Built in</span></div>
+          <div class="matrix__row" role="row"><span role="cell">Asset tracking & twins</span><span role="cell">Vendor C</span><span role="cell" class="yes">Built in</span></div>
+          <div class="matrix__row" role="row"><span role="cell">CRM with live device state</span><span role="cell">Generic CRM, no device data</span><span role="cell" class="yes">Built in</span></div>
+          <div class="matrix__row" role="row"><span role="cell">Event → ticket → dispatch</span><span role="cell">Helpdesk + glue scripts</span><span role="cell" class="yes">Built in</span></div>
+          <div class="matrix__row" role="row"><span role="cell">Field installation app</span><span role="cell">Spreadsheets & photos</span><span role="cell" class="yes">Built in</span></div>
+          <div class="matrix__row" role="row"><span role="cell">White-label customer apps</span><span role="cell">Agency project, 6 months</span><span role="cell" class="yes">Built in</span></div>
+          <div class="matrix__row" role="row"><span role="cell">Outcome-driven, no-code app builder</span><span role="cell">Months of custom development</span><span role="cell" class="yes">The AEP</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 09 FINAL CTA ============ -->
+    <section class="final" id="contact">
+      <canvas class="final__canvas" id="finalCanvas" aria-hidden="true"></canvas>
+      <div class="wrap final__inner">
+        <h2 class="final__title">Tell us your outcome.<br><span class="grad-text">Go live this week.</span></h2>
+        <p class="section-lede">Share the outcome you are after. We will show you a working application, built for it, on your own devices.</p>
+        <form class="final__form" id="leadForm" novalidate>
+          <label class="sr-only" for="email">Work email</label>
+          <input id="email" name="email" type="email" placeholder="you@company.com" autocomplete="email" required>
+          <button class="btn btn--signal" type="submit">Book a live demo</button>
+          <p class="final__msg" id="leadMsg" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__grid">
+      <div class="footer__brand">
+        <svg class="logo logo--lg" role="img" aria-label="#8"><use href="#logo"/></svg>
+        <p>We connect, control and make the world’s things intelligent. IoT, to the power of eight.</p>
+      </div>
+      <div><h4>Ecosystem</h4><ul id="footProducts"></ul></div>
+      <div><h4>Platform</h4><ul>
+        <li><a href="app.html?app=aep">AEP</a></li>
+        <li><a href="#shift">Operations-driven IoT</a></li>
+        <li><a href="#loop">How it works</a></li>
+        <li><a href="#matrix">Everything IoT</a></li>
+      </ul></div>
+      <div><h4>Company</h4><ul>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#industries">Industries</a></li>
+        <li><a href="#contact">Careers</a></li>
+        <li><a href="#contact">Partners</a></li>
+      </ul></div>
+    </div>
+    <div class="wrap footer__base">
+      <span>© <span id="year">2026</span> #8. All rights reserved.</span>
+      <span class="footer__legal"><a href="#">Privacy</a><a href="#">Security</a><a href="#">Terms</a></span>
+    </div>
+  </footer>
+
+  <script src="assets/js/products.js"></script>
+  <script src="assets/js/hero.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
