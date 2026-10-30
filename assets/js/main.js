@@ -147,13 +147,21 @@
       film.classList.toggle('has-sound', on);
     };
     sound.addEventListener('click', function () { setSound(video.muted); });
-    $('#filmBig').addEventListener('click', function () {
+    // The silent autoplay is a preview: the first click on it starts the film over with sound,
+    // instead of pausing it. After that, clicking the picture pauses and resumes as usual.
+    var watching = false;
+    var watch = function () {
+      watching = true;
+      film.classList.add('is-watching');
       setSound(true);
-      if (!film.classList.contains('has-played') || video.ended) video.currentTime = 0;
+      video.currentTime = 0;
       play();
-    });
-    toggle.addEventListener('click', flip);
-    video.addEventListener('click', flip);
+    };
+    var frameClick = function () { if (!watching) watch(); else flip(); };
+    $('#filmBig').addEventListener('click', frameClick);
+    $('#filmHint').addEventListener('click', watch);
+    toggle.addEventListener('click', function () { if (!watching && video.paused) watch(); else flip(); });
+    video.addEventListener('click', frameClick);
     chapList.addEventListener('click', function (e) {
       var b = e.target.closest('[data-t]');
       if (!b) return;
@@ -178,7 +186,7 @@
     // Starts silently the first time it scrolls into view; pauses when it leaves.
     var autoplayed = false;
     onView(film, function (vis) {
-      if (vis && !autoplayed && !reduceMotion) { autoplayed = true; play(); }
+      if (vis && !autoplayed && !reduceMotion) { autoplayed = true; video.muted = true; play(); }
       else if (!vis && !video.paused) video.pause();
     }, { threshold: 0.55 });
     sync();

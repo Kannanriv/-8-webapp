@@ -813,3 +813,16 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .loop .display { font-size: clamp(36px, 4.2vw, 60px); }
 
 @media (max-width: 760px) { .film__big-txt { display: none; } }
+
+/* Film states: silent preview (autoplaying, muted) vs watching (started by the visitor, with sound) */
+.film.is-playing:not(.is-watching) .film__big { opacity: 0; pointer-events: none; }
+.film:not(.is-watching) .film__bar { opacity: 0 !important; pointer-events: none; }
+.film.has-played:not(.is-playing):not(.is-watching) .film__big { opacity: 1; pointer-events: auto; }
+.film__video { cursor: pointer; }
+.film__hint { position: absolute; left: 22px; bottom: 22px; z-index: 3; display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 20px 0 14px; border-radius: 999px;
+  background: rgba(11,12,16,.78); color: #fff; font-size: 15px; font-weight: 600; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 14px 30px -12px rgba(11,12,16,.6); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity 300ms ease, transform 400ms var(--ease-out), background-color 200ms ease; }
+.film.is-playing:not(.is-watching) .film__hint { opacity: 1; transform: none; pointer-events: auto; }
+.film__hint:hover { background: rgba(11,12,16,.92); }
+.film__hint-ic { width: 26px; height: 26px; border-radius: 50%; background: var(--signal); position: relative; flex: none; }
+.film__hint-ic::after { content: ''; position: absolute; left: 10px; top: 8px; border-left: 9px solid #fff; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }

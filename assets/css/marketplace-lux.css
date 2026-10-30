@@ -203,3 +203,32 @@
 @media (prefers-reduced-motion: reduce) {
   .aisle__obj, .aisle__go, .duo__who i, .mkt__link span { transition: none; }
 }
+
+/* Alignment fix: cards never grow past their grid column; small aisles get a fixed art band
+   and a title size that fits the narrow column, so all three line up edge to edge. */
+.aisle { min-width: 0; overflow: hidden; }
+.aisle__art { overflow: hidden; }
+.aisle--2, .aisle--3, .aisle--4 { grid-template-rows: 150px 1fr; }
+.aisle--2 .aisle__art, .aisle--3 .aisle__art, .aisle--4 .aisle__art { min-height: 0; height: 150px; }
+.aisle--2 .aisle__obj, .aisle--3 .aisle__obj, .aisle--4 .aisle__obj { width: 46%; }
+.aisle--2 .aisle__obj--0, .aisle--3 .aisle__obj--0, .aisle--4 .aisle__obj--0 { left: 10%; top: 14%; }
+.aisle--2 .aisle__obj--1, .aisle--3 .aisle__obj--1, .aisle--4 .aisle__obj--1 { left: 42%; top: 38%; }
+.aisle--2 b, .aisle--3 b, .aisle--4 b { font-size: clamp(19px, 1.55vw, 24px); letter-spacing: -0.03em; overflow-wrap: anywhere; }
+.aisle--2 .aisle__body, .aisle--3 .aisle__body, .aisle--4 .aisle__body { padding: 18px 18px 18px; align-content: start; }
+@media (max-width: 1080px) {
+  .aisle--2, .aisle--3, .aisle--4 { grid-template-rows: 170px 1fr; }
+  .aisle--2 .aisle__art, .aisle--3 .aisle__art, .aisle--4 .aisle__art { height: 170px; }
+}
+@media (max-width: 1080px) {
+  .aisles .aisle--2 .aisle__obj, .aisles .aisle--3 .aisle__obj, .aisles .aisle--4 .aisle__obj { width: 30%; }
+  .aisles .aisle--2 .aisle__obj--0, .aisles .aisle--3 .aisle__obj--0, .aisles .aisle--4 .aisle__obj--0 { left: 18%; top: 16%; }
+  .aisles .aisle--2 .aisle__obj--1, .aisles .aisle--3 .aisle__obj--1, .aisles .aisle--4 .aisle__obj--1 { left: 48%; top: 30%; }
+}
+@media (max-width: 1080px) {
+  .aisles .aisle__body, .aisles .aisle--2 .aisle__body, .aisles .aisle--3 .aisle__body, .aisles .aisle--4 .aisle__body { padding-right: 72px; }
+}
+@media (max-width: 760px) {
+  .aisles .aisle--2 .aisle__obj, .aisles .aisle--3 .aisle__obj, .aisles .aisle--4 .aisle__obj { width: 36%; }
+  .aisles .aisle--2 .aisle__obj--0, .aisles .aisle--3 .aisle__obj--0, .aisles .aisle--4 .aisle__obj--0 { left: 12%; top: 14%; }
+  .aisles .aisle--2 .aisle__obj--1, .aisles .aisle--3 .aisle__obj--1, .aisles .aisle--4 .aisle__obj--1 { left: 50%; top: 32%; }
+}
